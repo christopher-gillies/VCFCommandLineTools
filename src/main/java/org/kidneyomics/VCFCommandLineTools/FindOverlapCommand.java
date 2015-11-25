@@ -58,7 +58,12 @@ public class FindOverlapCommand implements RunCommand {
 					Allele ref = vc.getReference();
 					Allele alt = vc.getAlternateAllele(0);
 					
-					int ac = vc.getCalledChrCount(alt);
+					int ac = vc.getAttributeAsInt("AC", -1);
+					if(ac == -1) {
+						logger.info("Scanning genotypes b/c not AC in info field");
+						ac = vc.getCalledChrCount(alt);
+					}
+					
 					if(ac >= minAc) {
 						template.remove("chr");
 						template.remove("start");
