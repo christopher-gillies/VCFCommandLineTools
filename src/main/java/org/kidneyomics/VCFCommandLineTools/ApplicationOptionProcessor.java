@@ -60,7 +60,7 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap")
+		.desc("The command you would like to perform: findOverlap, selectSites")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -88,6 +88,17 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.required(false)
 		.build();
 		options.addOption(outfileOp);
+		
+		
+		Option infileOp = Option.builder()
+		.argName("infile")
+		.longOpt("infile")
+		.desc("The to read in")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(infileOp);
 		
 		Option helpOption = Option.builder()
 		.longOpt("help")
@@ -131,6 +142,10 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		if(cmd.hasOption("outfile")) {
 			applicationOptions.setOutFile(cmd.getOptionValue("outfile"));
+		}
+		
+		if(cmd.hasOption("infile")) {
+			applicationOptions.setInFile(cmd.getOptionValue("infile"));
 		}
 		
 		if(cmd.hasOption("minAc")) {

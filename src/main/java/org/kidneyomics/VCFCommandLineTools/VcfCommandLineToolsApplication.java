@@ -29,6 +29,10 @@ public class VcfCommandLineToolsApplication {
     		RunCommand foc = context.getBean(FindOverlapCommand.class);
     		foc.runCommand();
     		break;
+    	case SELECT_SITES:
+    		RunCommand ssc = context.getBean(SelectSitesCommand.class);
+    		ssc.runCommand();
+    		break;
     	default:
     			
     	}

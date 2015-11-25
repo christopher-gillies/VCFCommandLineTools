@@ -2,7 +2,7 @@ package org.kidneyomics.VCFCommandLineTools;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collection;
+import java.util.List;
 import java.util.LinkedList;
 
 import org.slf4j.Logger;
@@ -22,11 +22,13 @@ public class ApplicationOptions {
 	Logger logger;
 	private Command command = Command.NONE;
 	
-	private Collection<File> vcfs; 
+	private List<File> vcfs; 
 	
 	private int minAc = 1;
 	
 	private String outFile;
+	
+	private String inFile;
 	
 	@Autowired
 	ApplicationOptions(LoggerService loggerService) throws UnsupportedEncodingException {
@@ -38,7 +40,8 @@ public class ApplicationOptions {
 	public enum Command {
 		NONE,
 		HELP,
-		FIND_OVERLAP
+		FIND_OVERLAP,
+		SELECT_SITES
 	}
 
 	public String getJarLocation() {
@@ -54,7 +57,7 @@ public class ApplicationOptions {
 		}
 	}
 	
-	public Collection<File> getVcfs() {
+	public List<File> getVcfs() {
 		return this.vcfs;
 	}
 	
@@ -67,6 +70,9 @@ public class ApplicationOptions {
 		switch(commandString) {
 		case "findOverlap":
 			command = Command.FIND_OVERLAP;
+			break;
+		case "selectSites":
+			command = Command.SELECT_SITES;
 			break;
 		case "help":
 			command = Command.HELP;
@@ -82,6 +88,14 @@ public class ApplicationOptions {
 	
 	
 	
+	public String getInFile() {
+		return inFile;
+	}
+
+	public void setInFile(String inFile) {
+		this.inFile = inFile;
+	}
+
 	public String getOutFile() {
 		return outFile;
 	}
@@ -110,6 +124,21 @@ public class ApplicationOptions {
 			}
 			
 			break;
+		case SELECT_SITES:
+			if(vcfs.size() < 1) {
+				throw new IllegalStateException("Please specify one vcf");
+			}
+			
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
+			
+			if(StringUtils.isEmpty(this.getInFile())) {
+				throw new IllegalStateException("Please specify an input file");
+			}
+			
+			break;
+	
 		case HELP:
 			break;
 		default:

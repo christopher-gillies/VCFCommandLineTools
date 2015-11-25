@@ -36,8 +36,6 @@ public class FindOverlapCommand implements RunCommand {
 		
 		final int minAc  = applicationOptions.getMinAc();
 
-		ST template = new ST("<chr>:<start>:<ref>:<alt>");
-		
 		HashMap<String,HashSet<String>> fileVariants =  new HashMap<String,HashSet<String>>();
 		
 		for(File vcf : vcfs) {
@@ -74,21 +72,11 @@ public class FindOverlapCommand implements RunCommand {
 					
 					
 					if(ac >= minAc) {
-						template.remove("chr");
-						template.remove("start");
-						template.remove("ref");
-						template.remove("alt");
-						template.add("chr", vc.getContig());
-						template.add("start", vc.getStart());
-						template.add("ref", ref.getBaseString());
-						template.add("alt", alt.getBaseString());
 						
-						String variant = template.render();
+						String variant = VariantKeyRenderer.render(vc.getContig(),  vc.getStart(), ref.getBaseString(), alt.getBaseString());
 						
 						variants.add(variant);
 						
-						//logger.info(variant);
-						//logger.info("AC="+ac);
 					}
 					
 					
@@ -103,7 +91,7 @@ public class FindOverlapCommand implements RunCommand {
 		for(File vcf : vcfs) {
 			HashSet<String> variants = fileVariants.get(vcf.getAbsolutePath());
 			logger.info(vcf.getAbsolutePath());
-			logger.info("Biallelic SNP with ac > " + minAc +": " + variants.size());
+			logger.info("Biallelic SNPs with ac > " + minAc +": " + variants.size());
 			
 			if(intersection == null) {
 				intersection = variants;
