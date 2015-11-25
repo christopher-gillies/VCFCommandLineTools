@@ -51,7 +51,14 @@ public class FindOverlapCommand implements RunCommand {
 			
 			VCFFileReader reader = new VCFFileReader(vcf, false);
 			
+			int variantCount = 0;
 			for(final VariantContext vc : reader) {
+				variantCount++;
+				
+				if(variantCount % 100000 == 0) {
+					logger.info("Scanned " + variantCount + " variants");
+					logger.info("Currently at " + vc.getContig() + ":" + vc.getStart());
+				}
 				
 				if(vc.isBiallelic() && vc.isSNP()) {
 									
@@ -60,9 +67,11 @@ public class FindOverlapCommand implements RunCommand {
 					
 					int ac = vc.getAttributeAsInt("AC", -1);
 					if(ac == -1) {
-						logger.info("Scanning genotypes b/c not AC in info field");
+						//logger.info("Scanning genotypes b/c not AC in info field");
 						ac = vc.getCalledChrCount(alt);
 					}
+					
+					
 					
 					if(ac >= minAc) {
 						template.remove("chr");
