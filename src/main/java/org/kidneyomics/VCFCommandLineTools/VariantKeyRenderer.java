@@ -2,6 +2,8 @@ package org.kidneyomics.VCFCommandLineTools;
 
 import org.stringtemplate.v4.ST;
 
+import htsjdk.variant.variantcontext.VariantContext;
+
 public class VariantKeyRenderer {
 
 	private VariantKeyRenderer() {
@@ -21,5 +23,9 @@ public class VariantKeyRenderer {
 		template.add("ref", ref);
 		template.add("alt", alt);
 		return template.render();
+	}
+	
+	public static String render(VariantContext context) {
+		return render(context.getContig(),context.getStart(),context.getReference().getBaseString(),context.getAlternateAllele(0).getBaseString());
 	}
 }

@@ -67,7 +67,7 @@ public class SelectSitesCommand implements RunCommand {
 			readCount++;
 			
 			if(readCount % 100000 == 0) {
-				logger.info("Read " + readCount + "lines");
+				logger.info("Read " + readCount + " lines");
 			}
 			
 			if(vc.isBiallelic() && vc.isSNP()) {
@@ -80,7 +80,7 @@ public class SelectSitesCommand implements RunCommand {
 					writeCount++;
 					
 					if(writeCount % 100000 == 0) {
-						logger.info("Wrote " + writeCount + "lines");
+						logger.info("Wrote " + writeCount + " lines");
 						logger.info("Current key " + variant);
 					}
 					

@@ -54,13 +54,24 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.valueSeparator(' ')
 		.required(false)
 		.build();
-		
 		options.addOption(vcfOption);
+		
+		Option siteOption = Option.builder()
+		.argName("site")
+		.longOpt("site")
+		.desc("please specify a site")
+		.numberOfArgs(100)
+		.hasArg(true)
+		.valueSeparator(' ')
+		.required(false)
+		.build();
+		
+		options.addOption(siteOption);
 		
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -134,6 +145,17 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			for(String vcf : vcfs) {
 				applicationOptions.addVcfFile(vcf);
 			}
+		}
+		
+		
+		if(cmd.hasOption("site")) {
+			String[] sites = cmd.getOptionValues("site");
+			
+			for(String site : sites) {
+				applicationOptions.addSite(site);
+			}
+			
+			
 		}
 		
 		if(cmd.hasOption("command")) {

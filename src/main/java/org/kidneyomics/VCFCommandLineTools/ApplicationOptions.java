@@ -30,18 +30,22 @@ public class ApplicationOptions {
 	
 	private String inFile;
 	
+	private List<String> sites;
+	
 	@Autowired
 	ApplicationOptions(LoggerService loggerService) throws UnsupportedEncodingException {
 		this.logger = loggerService.getLogger(this);
 		jarLocation =  new ApplicationHome(ApplicationOptions.class).getSource().getAbsolutePath();
 		vcfs = new LinkedList<File>();
+		sites = new LinkedList<String>();
 	}
 	
 	public enum Command {
 		NONE,
 		HELP,
 		FIND_OVERLAP,
-		SELECT_SITES
+		SELECT_SITES,
+		VIEW_GENOTYPES
 	}
 
 	public String getJarLocation() {
@@ -77,6 +81,9 @@ public class ApplicationOptions {
 		case "help":
 			command = Command.HELP;
 			break;
+		case "viewGenotypes":
+			command = Command.VIEW_GENOTYPES;
+			break;
 		default: 
 			command = Command.NONE;
 			break;
@@ -85,8 +92,18 @@ public class ApplicationOptions {
 		
 	}
 	
+	public List<String> getSites() {
+		return this.sites;
+	}
 	
+
+	public void addSite(String site) {
+		this.sites.add(site);
+	}
 	
+	public void clearSites() {
+		this.sites.clear();
+	}
 	
 	public String getInFile() {
 		return inFile;
@@ -125,7 +142,7 @@ public class ApplicationOptions {
 			
 			break;
 		case SELECT_SITES:
-			if(vcfs.size() < 1) {
+			if(vcfs.size() != 1) {
 				throw new IllegalStateException("Please specify one vcf");
 			}
 			
@@ -138,7 +155,16 @@ public class ApplicationOptions {
 			}
 			
 			break;
-	
+		case VIEW_GENOTYPES:
+			if(vcfs.size() != 1) {
+				throw new IllegalStateException("Please specify one vcf");
+			}
+			
+			if(sites.size() < 1) {
+				throw new IllegalStateException("Please specify at least one sites");
+			}
+			
+			break;
 		case HELP:
 			break;
 		default:

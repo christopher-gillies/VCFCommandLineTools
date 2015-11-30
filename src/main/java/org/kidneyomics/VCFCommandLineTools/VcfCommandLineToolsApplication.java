@@ -33,6 +33,10 @@ public class VcfCommandLineToolsApplication {
     		RunCommand ssc = context.getBean(SelectSitesCommand.class);
     		ssc.runCommand();
     		break;
+    	case VIEW_GENOTYPES:
+    		RunCommand vgc = context.getBean(ViewGenotypesCommand.class);
+    		vgc.runCommand();
+    		break;
     	default:
     			
     	}
