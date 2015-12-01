@@ -2,6 +2,7 @@ package org.kidneyomics.VCFCommandLineTools;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ViewGenotypesCommand implements RunCommand {
 	public void runCommand() {
 		File vcf = applicationOptions.getVcfs().get(0);
 		
-		
+		GTRenderer gtRenderer = GTRendererFactory.getGTRenderer(applicationOptions.getGtRendererType());
 		
 		VCFFileReader reader = new VCFFileReader(vcf);
 		
@@ -74,6 +75,11 @@ public class ViewGenotypesCommand implements RunCommand {
 						
 		}
 		
+		if(sampleIds == null) {
+			sampleIds = new HashSet<String>();
+			logger.warn("No site found");
+		}
+		
 		
 		//Write out table
 		StringBuilder sb = new StringBuilder();
@@ -98,19 +104,8 @@ public class ViewGenotypesCommand implements RunCommand {
 			sb.append(sampleId);
 			sb.append("\t");
 			for(Genotype gt : gts) {
-				List<Allele> alleles = gt.getAlleles();
-				int gtCount = 0;
-				for(Allele a : alleles) {
-					
-					if(a.isNoCall()) {
-						continue;
-					}
-					
-					if(a.isNonReference()) {
-						gtCount++;
-					}
-				}
-				sb.append(Integer.toString(gtCount));
+
+				sb.append(gtRenderer.render(gt));
 				sb.append("\t");
 				
 			}
@@ -120,7 +115,7 @@ public class ViewGenotypesCommand implements RunCommand {
 		
 		reader.close();
 		
-		logger.info(sb.toString());
+		System.out.print(sb.toString());
 	}	
 
 	

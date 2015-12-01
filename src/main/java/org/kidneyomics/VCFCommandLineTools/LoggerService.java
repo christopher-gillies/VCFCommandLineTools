@@ -12,4 +12,8 @@ public class LoggerService {
 		return LoggerFactory.getLogger(instance.getClass());
 	}
 	
+	public Logger getLogger(Class<?> arg) {
+		return LoggerFactory.getLogger(arg);
+	}
+	
 }

@@ -29,9 +29,6 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 	ApplicationOptionProcessor(ApplicationArguments args, LoggerService loggerService, ApplicationOptions applicationOptions) throws ParseException {
 		this.logger = loggerService.getLogger(this);
 		this.applicationOptions = applicationOptions;
-		if(args == null) {
-			throw new NullPointerException("ApplicationArguments args is null");
-		}
 		try {
 			processInputs(args.getSourceArgs());
 		} catch(Exception e) {
@@ -120,7 +117,17 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		options.addOption(helpOption);
 		
-		logger.info(StringUtils.arrayToCommaDelimitedString(args));
+		
+		Option nucleotideOpt = Option.builder()
+		.longOpt("nucleotide")
+		.desc("Show nucleotides instead of numeric genotype")
+		.hasArg(false)
+		.required(false)
+		.build();
+		
+		options.addOption(nucleotideOpt);
+		
+		//logger.info(StringUtils.arrayToCommaDelimitedString(args));
 
 		
 		CommandLineParser parser = new DefaultParser();
@@ -138,6 +145,10 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			printHelp(options);
 			applicationOptions.setCommand("help");
 			return;
+		}
+		
+		if(cmd.hasOption("nucleotide")) {
+			applicationOptions.setNucleotideRender();
 		}
 		
 		if(cmd.hasOption("vcf")) {

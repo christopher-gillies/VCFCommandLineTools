@@ -7,7 +7,6 @@ import javax.script.ScriptException;
 
 import org.kidneyomics.VCFCommandLineTools.ApplicationOptions.Command;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -22,23 +21,32 @@ public class VcfCommandLineToolsApplication {
     	
     	ApplicationOptions options = context.getBean(ApplicationOptions.class);
     	
-    	Command command = options.validate();
     	
-    	switch(command) {
-    	case FIND_OVERLAP:
-    		RunCommand foc = context.getBean(FindOverlapCommand.class);
-    		foc.runCommand();
-    		break;
-    	case SELECT_SITES:
-    		RunCommand ssc = context.getBean(SelectSitesCommand.class);
-    		ssc.runCommand();
-    		break;
-    	case VIEW_GENOTYPES:
-    		RunCommand vgc = context.getBean(ViewGenotypesCommand.class);
-    		vgc.runCommand();
-    		break;
-    	default:
-    			
+    	LoggerService loggerService = context.getBean(LoggerService.class);
+    	Logger logger = loggerService.getLogger(VcfCommandLineToolsApplication.class);
+    	
+    	try {
+	    	Command command = options.validate();
+	    	
+	    	switch(command) {
+	    	case FIND_OVERLAP:
+	    		RunCommand foc = context.getBean(FindOverlapCommand.class);
+	    		foc.runCommand();
+	    		break;
+	    	case SELECT_SITES:
+	    		RunCommand ssc = context.getBean(SelectSitesCommand.class);
+	    		ssc.runCommand();
+	    		break;
+	    	case VIEW_GENOTYPES:
+	    		RunCommand vgc = context.getBean(ViewGenotypesCommand.class);
+	    		vgc.runCommand();
+	    		break;
+	    	default:
+	    			
+	    	}
+    	} catch(Exception e) {
+    		logger.error(e.getMessage());
+    		throw e;
     	}
     	
         /*

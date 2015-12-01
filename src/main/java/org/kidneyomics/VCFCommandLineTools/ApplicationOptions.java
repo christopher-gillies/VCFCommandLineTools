@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.LinkedList;
 
+import org.kidneyomics.VCFCommandLineTools.GTRendererFactory.GT_RENDER_TYPE;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationHome;
@@ -31,6 +32,9 @@ public class ApplicationOptions {
 	private String inFile;
 	
 	private List<String> sites;
+	
+	private GT_RENDER_TYPE gtRendererType = GT_RENDER_TYPE.NUMERIC;
+	
 	
 	@Autowired
 	ApplicationOptions(LoggerService loggerService) throws UnsupportedEncodingException {
@@ -67,6 +71,14 @@ public class ApplicationOptions {
 	
 	public Command getCommand() {
 		return this.command;
+	}
+	
+	public GT_RENDER_TYPE getGtRendererType() {
+		return this.gtRendererType;
+	}
+	
+	public void setNucleotideRender() {
+		this.gtRendererType = GT_RENDER_TYPE.NUCLEOTIDE;
 	}
 	
 	public void setCommand(String commandString) {
