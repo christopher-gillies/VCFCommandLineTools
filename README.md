@@ -1,5 +1,16 @@
 # VCFCommandLineTools
 
+## Run on windows
+* Install java
+* Download the latest jar file from release folder of this repository
+
+```bash
+set vcftools="c:\Users\cgillies\Downloads\VCFCommandLineTools-0.0.1.jar"
+set vcf="Z:\path\all.chr.snp.indel.phased.vcf.gz"
+java -jar %vcftools% --vcf %vcf% --command viewGenotypes --site 14:106337470 --site 14:106341031 --site 14:106341805
+java -jar %vcftools% --vcf %vcf% --command viewGenotypes --site 14:106337470 --site 14:106341031 --site 14:106341805 --nucleotide
+```
+
 ## Example view genotypes
 
 ```bash
@@ -25,3 +36,5 @@ SAMPLE_3	A/A	G/G	A/A
 SAMPLE_4	A/A	G/G	A/A	
  
 ``` 
+
+
