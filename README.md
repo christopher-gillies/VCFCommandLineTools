@@ -36,5 +36,24 @@ SAMPLE_3	A/A	G/G	A/A
 SAMPLE_4	A/A	G/G	A/A	
  
 ``` 
+# Help
+```
+$vcfTools --help
+       _  _  _                                         ___             
+ \  / /  |_ /   _  ._ _  ._ _   _. ._   _| |  o ._   _  |  _   _  |  _ 
+  \/  \_ |  \_ (_) | | | | | | (_| | | (_| |_ | | | (/_ | (_) (_) | _> 
+                                                                       
+usage: VCFCommandLineTools
+    --command <command>   The command you would like to perform:
+                          findOverlap, selectSites, viewGenotypes
+    --help                Print the help message
+    --infile <infile>     The to read in
+    --minAc <minAc>       The minimum allele count for a variant to be
+                          considered
+    --nucleotide          Show nucleotides instead of numeric genotype
+    --outfile <outfile>   The file to write out to
+    --site <site>         please specify a site
+    --vcf <vcf>           a vcf file
 
+```
 
