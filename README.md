@@ -36,7 +36,7 @@ SAMPLE_3	A/A	G/G	A/A
 SAMPLE_4	A/A	G/G	A/A	
  
 ``` 
-# Help
+## Help
 ```
 $vcfTools --help
        _  _  _                                         ___             
