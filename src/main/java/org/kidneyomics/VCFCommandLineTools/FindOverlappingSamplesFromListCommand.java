@@ -1,6 +1,7 @@
 package org.kidneyomics.VCFCommandLineTools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class FindOverlappingSamplesFromListCommand implements RunCommand {
 	public void runCommand() {
 		File vcf = applicationOptions.getVcfs().get(0);
 		String infile = applicationOptions.getInFile();
+		String outfile = applicationOptions.getOutFile();
+		
+		StringBuilder outWriter = new StringBuilder();
 		
 		List<String> lines = null;
 		try {
@@ -46,14 +50,25 @@ public class FindOverlappingSamplesFromListCommand implements RunCommand {
 		List<String> samplesInVCF = reader.getFileHeader().getGenotypeSamples();
 		reader.close();
 		
+		logger.info("Number of samples in VCF: " + samplesInVCF);
+		logger.info("Number of samples in input file: " + sampleIds.size());
 		
+		int overlap = 0;
 		for(String sample : samplesInVCF) {
 			if(sampleIds.contains(sample)) {
-				System.out.println(sample);
+				overlap++;
+				outWriter.append(sample);
+				outWriter.append("\n");
 			}
 		}
+		logger.info("Number of overlapping samples: " + overlap);
 		
-		
+		try {
+			FileUtils.write(new File(outfile), outWriter.toString());
+		} catch (IOException e) {
+			logger.info(e.getMessage());
+			System.exit(1);
+		}
 	}
 
 }

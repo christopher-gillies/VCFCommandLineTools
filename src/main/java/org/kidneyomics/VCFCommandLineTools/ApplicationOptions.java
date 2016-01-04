@@ -186,9 +186,14 @@ public class ApplicationOptions {
 				throw new IllegalStateException("Please specify one vcf");
 			}
 			
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
+			
 			if(StringUtils.isEmpty(this.getInFile())) {
 				throw new IllegalStateException("Please specify an input file");
 			}
+			
 			
 			break;
 		case HELP:
