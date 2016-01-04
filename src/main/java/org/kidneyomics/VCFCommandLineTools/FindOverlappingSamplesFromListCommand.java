@@ -50,7 +50,7 @@ public class FindOverlappingSamplesFromListCommand implements RunCommand {
 		List<String> samplesInVCF = reader.getFileHeader().getGenotypeSamples();
 		reader.close();
 		
-		logger.info("Number of samples in VCF: " + samplesInVCF);
+		logger.info("Number of samples in VCF: " + samplesInVCF.size());
 		logger.info("Number of samples in input file: " + sampleIds.size());
 		
 		int overlap = 0;
