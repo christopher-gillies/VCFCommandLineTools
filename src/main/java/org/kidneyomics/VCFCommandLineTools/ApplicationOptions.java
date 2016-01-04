@@ -49,7 +49,8 @@ public class ApplicationOptions {
 		HELP,
 		FIND_OVERLAP,
 		SELECT_SITES,
-		VIEW_GENOTYPES
+		VIEW_GENOTYPES,
+		FIND_OVERLAPPING_SAMPLES_FROM_LIST
 	}
 
 	public String getJarLocation() {
@@ -95,6 +96,9 @@ public class ApplicationOptions {
 			break;
 		case "viewGenotypes":
 			command = Command.VIEW_GENOTYPES;
+			break;
+		case "findOverlappingSamplesFromList":
+			command = Command.FIND_OVERLAPPING_SAMPLES_FROM_LIST;
 			break;
 		default: 
 			command = Command.NONE;
@@ -174,6 +178,16 @@ public class ApplicationOptions {
 			
 			if(sites.size() < 1) {
 				throw new IllegalStateException("Please specify at least one sites");
+			}
+			
+			break;
+		case FIND_OVERLAPPING_SAMPLES_FROM_LIST:
+			if(vcfs.size() != 1) {
+				throw new IllegalStateException("Please specify one vcf");
+			}
+			
+			if(StringUtils.isEmpty(this.getInFile())) {
+				throw new IllegalStateException("Please specify an input file");
 			}
 			
 			break;

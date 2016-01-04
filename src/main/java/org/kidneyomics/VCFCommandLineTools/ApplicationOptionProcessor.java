@@ -68,7 +68,7 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, findOverlappingSamplesFromList. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)

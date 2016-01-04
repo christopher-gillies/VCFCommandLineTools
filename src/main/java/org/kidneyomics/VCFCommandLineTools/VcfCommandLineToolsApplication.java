@@ -28,26 +28,33 @@ public class VcfCommandLineToolsApplication {
     	try {
 	    	Command command = options.validate();
 	    	
+	    	RunCommand runCommand = null;
 	    	switch(command) {
 	    	case FIND_OVERLAP:
-	    		RunCommand foc = context.getBean(FindOverlapCommand.class);
-	    		foc.runCommand();
+	    		runCommand = context.getBean(FindOverlapCommand.class);
 	    		break;
 	    	case SELECT_SITES:
-	    		RunCommand ssc = context.getBean(SelectSitesCommand.class);
-	    		ssc.runCommand();
+	    		runCommand = context.getBean(SelectSitesCommand.class);
 	    		break;
 	    	case VIEW_GENOTYPES:
-	    		RunCommand vgc = context.getBean(ViewGenotypesCommand.class);
-	    		vgc.runCommand();
+	    		runCommand = context.getBean(ViewGenotypesCommand.class);
+	    		break;
+	    	case FIND_OVERLAPPING_SAMPLES_FROM_LIST:
+	    		runCommand = context.getBean(FindOverlappingSamplesFromListCommand.class);
 	    		break;
 	    	default:
 	    			
 	    	}
+	    	
+	    	if(runCommand != null) {
+	    		runCommand.runCommand();
+	    	}
+	    	
     	} catch(Exception e) {
     		logger.error(e.getMessage());
     		throw e;
     	}
+    	
     	
         /*
         ScriptEngineManager factory = new ScriptEngineManager();
