@@ -7,9 +7,11 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import htsjdk.variant.vcf.VCFFileReader;
 
+@Component
 public class FindOverlappingSamplesFromListCommand implements RunCommand {
 
 	
