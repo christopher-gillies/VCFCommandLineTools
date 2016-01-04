@@ -37,7 +37,7 @@ SAMPLE_4	A/A	G/G	A/A
 ``` 
 
 
-## Example view genotypes
+## Example find overlapping samples from list
 
 ```
 export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
