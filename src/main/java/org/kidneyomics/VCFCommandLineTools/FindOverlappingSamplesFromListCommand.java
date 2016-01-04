@@ -62,13 +62,13 @@ public class FindOverlappingSamplesFromListCommand implements RunCommand {
 			}
 		}
 		logger.info("Number of overlapping samples: " + overlap);
-		
 		try {
 			FileUtils.write(new File(outfile), outWriter.toString());
 		} catch (IOException e) {
 			logger.info(e.getMessage());
 			System.exit(1);
 		}
+		logger.info("Wrote results to: " + outfile);
 	}
 
 }
