@@ -34,8 +34,27 @@ SAMPLE_1	A/A	G/G	A/A
 SAMPLE_2	A/A	G/G	A/A	
 SAMPLE_3	A/A	G/G	A/A	
 SAMPLE_4	A/A	G/G	A/A	
- 
 ``` 
+
+
+## Example view genotypes
+
+```
+export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF=/kidneyomics/1000G_Phase3/ALL.chr1.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
+$vcfTools --command findOverlappingSamplesFromList --vcf $VCF --infile /kidneyomics/NEPTUNE_FLUIDIGM/1000G.samples.ids --outfile /kidneyomics/NEPTUNE_FLUIDIGM/1000G.samples.ids.phase3.overlap.txt
+```
+
+```
+cat /kidneyomics/NEPTUNE_FLUIDIGM/1000G.samples.ids.phase3.overlap.txt
+HG00100
+HG00138
+HG00160
+HG00233
+HG00246
+...
+```
+
 ## Help
 ```
 $vcfTools --help
