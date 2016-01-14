@@ -1,10 +1,16 @@
 # VCFCommandLineTools
 
+##Download
+
+```
+wget -O VCFCommandLineTools-1.0.0.jar https://github.com/christopher-gillies/VCFCommandLineTools/blob/master/release/VCFCommandLineTools-0.0.1.jar?raw=true
+```
+
 ## Run on windows
 * Install java
 * Download the latest jar file from release folder of this repository
 
-```bash
+```
 set vcftools="c:\Users\cgillies\Downloads\VCFCommandLineTools-0.0.1.jar"
 set vcf="Z:\path\all.chr.snp.indel.phased.vcf.gz"
 java -jar %vcftools% --vcf %vcf% --command viewGenotypes --site 14:106337470 --site 14:106341031 --site 14:106341805
