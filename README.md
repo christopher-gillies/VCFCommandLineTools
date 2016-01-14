@@ -3,7 +3,7 @@
 ##Download
 
 ```
-wget -O rna-seq-pipeline-1.0.0.jar https://github.com/christopher-gillies/VCFCommandLineTools/blob/master/release/VCFCommandLineTools-0.0.1.jar?raw=true
+wget -O VCFCommandLineTools-1.0.0.jar https://github.com/christopher-gillies/VCFCommandLineTools/blob/master/release/VCFCommandLineTools-0.0.1.jar?raw=true
 ```
 
 ## Run on windows
