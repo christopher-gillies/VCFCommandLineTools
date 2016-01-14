@@ -42,6 +42,32 @@ public class GTRendererTest {
 		
 	}
 	
+	@Test
+	public void testNumeric2() {
+		GTRenderer renderer = GTRendererFactory.getGTRenderer(GT_RENDER_TYPE.NUMERIC);
+		
+		Allele a1 = Allele.create(".", false);
+		Allele a2 = Allele.create(".",false);
+		
+		List<Allele> alleles = new LinkedList<Allele>();
+		
+		alleles.add(a1);
+		alleles.add(a2);
+		
+		
+		Genotype gt = GenotypeBuilder.create("SAMPLE1", alleles);
+		
+		Logger logger = new LoggerService().getLogger(this);
+		
+		logger.info(gt.toString());
+		logger.info("IS HET? " + gt.isHet());
+		
+		String result = renderer.render(gt);
+		
+		assertTrue(result.equals("."));
+		
+	}
+	
 	
 	@Test
 	public void testNucleotide() {

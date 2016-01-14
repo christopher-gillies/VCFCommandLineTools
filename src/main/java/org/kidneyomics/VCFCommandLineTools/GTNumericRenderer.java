@@ -12,9 +12,12 @@ public class GTNumericRenderer implements GTRenderer {
 	public String render(Genotype genotype) {
 		List<Allele> alleles = genotype.getAlleles();
 		int gtCount = 0;
+		boolean missingFlag = false;
+		
 		for(Allele a : alleles) {
 			
 			if(a.isNoCall()) {
+				missingFlag = true;
 				continue;
 			}
 			
@@ -22,7 +25,12 @@ public class GTNumericRenderer implements GTRenderer {
 				gtCount++;
 			}
 		}
-		return Integer.toString(gtCount);
+		
+		if(missingFlag == true) {
+			return ".";
+		} else {
+			return Integer.toString(gtCount);
+		}
 	}
 
 }
