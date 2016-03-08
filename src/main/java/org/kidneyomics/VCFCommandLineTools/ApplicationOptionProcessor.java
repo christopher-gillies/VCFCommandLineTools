@@ -68,7 +68,7 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, findOverlappingSamplesFromList. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field.")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -101,12 +101,23 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option infileOp = Option.builder()
 		.argName("infile")
 		.longOpt("infile")
-		.desc("The to read in")
+		.desc("The file to read in")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
 		.build();
 		options.addOption(infileOp);
+		
+		
+		Option infoOpt = Option.builder()
+		.argName("info")
+		.longOpt("info")
+		.desc("The info to select out of vcf")
+		.numberOfArgs(100)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(infoOpt);
 		
 		Option helpOption = Option.builder()
 		.longOpt("help")
@@ -158,15 +169,19 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			}
 		}
 		
+		if(cmd.hasOption("info")) {
+			String[] infos = cmd.getOptionValues("info");
+			for(String info : infos) {
+				applicationOptions.addInfo(info);
+			}
+		}
+		
 		
 		if(cmd.hasOption("site")) {
 			String[] sites = cmd.getOptionValues("site");
-			
 			for(String site : sites) {
 				applicationOptions.addSite(site);
 			}
-			
-			
 		}
 		
 		if(cmd.hasOption("command")) {

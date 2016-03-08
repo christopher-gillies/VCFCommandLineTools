@@ -6,6 +6,6 @@ my $f =  `ls ./target/*.jar`;
 
 $f =~ /\.\/target\/(VCFCommandLineTools-\d+\.\d+\.\d+)/;
 chomp($f);
-my $cmd = "cp $f ./release/$1.jar\n";
+my $cmd = "mvn package;cp $f ./release/$1.jar\n";
 print "$cmd";
 print `$cmd`;

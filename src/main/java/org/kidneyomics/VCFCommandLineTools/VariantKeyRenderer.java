@@ -28,4 +28,5 @@ public class VariantKeyRenderer {
 	public static String render(VariantContext context) {
 		return render(context.getContig(),context.getStart(),context.getReference().getBaseString(),context.getAlternateAllele(0).getBaseString());
 	}
+	
 }

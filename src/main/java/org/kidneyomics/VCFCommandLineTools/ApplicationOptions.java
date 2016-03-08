@@ -33,6 +33,8 @@ public class ApplicationOptions {
 	
 	private List<String> sites;
 	
+	private List<String> infos;
+	
 	private GT_RENDER_TYPE gtRendererType = GT_RENDER_TYPE.NUMERIC;
 	
 	
@@ -42,6 +44,7 @@ public class ApplicationOptions {
 		jarLocation =  new ApplicationHome(ApplicationOptions.class).getSource().getAbsolutePath();
 		vcfs = new LinkedList<File>();
 		sites = new LinkedList<String>();
+		infos = new LinkedList<>();
 	}
 	
 	public enum Command {
@@ -50,6 +53,7 @@ public class ApplicationOptions {
 		FIND_OVERLAP,
 		SELECT_SITES,
 		VIEW_GENOTYPES,
+		VIEW_INFO,
 		FIND_OVERLAPPING_SAMPLES_FROM_LIST
 	}
 
@@ -100,6 +104,9 @@ public class ApplicationOptions {
 		case "findOverlappingSamplesFromList":
 			command = Command.FIND_OVERLAPPING_SAMPLES_FROM_LIST;
 			break;
+		case "viewInfo":
+			command = Command.VIEW_INFO;
+			break;
 		default: 
 			command = Command.NONE;
 			break;
@@ -115,6 +122,14 @@ public class ApplicationOptions {
 
 	public void addSite(String site) {
 		this.sites.add(site);
+	}
+	
+	public void addInfo(String info) {
+		this.infos.add(info);
+	}
+	
+	public List<String> getInfos() {
+		return this.infos;
 	}
 	
 	public void clearSites() {
@@ -196,6 +211,19 @@ public class ApplicationOptions {
 			
 			
 			break;
+		case VIEW_INFO:
+			if(vcfs.size() != 1) {
+				throw new IllegalArgumentException("Please specify one VCF");
+			}
+			
+			if(StringUtils.isEmpty(this.getInFile())) {
+				throw new IllegalStateException("Please specify an input file");
+			}
+			
+			if(infos.size() == 0) {
+				throw new IllegalArgumentException("Please specify info to select");
+			}
+			
 		case HELP:
 			break;
 		default:

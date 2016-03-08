@@ -7,6 +7,7 @@ import javax.script.ScriptException;
 
 import org.kidneyomics.VCFCommandLineTools.ApplicationOptions.Command;
 import org.slf4j.Logger;
+import org.springframework.amqp.rabbit.core.RabbitTemplate.ReturnCallback;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +42,9 @@ public class VcfCommandLineToolsApplication {
 	    		break;
 	    	case FIND_OVERLAPPING_SAMPLES_FROM_LIST:
 	    		runCommand = context.getBean(FindOverlappingSamplesFromListCommand.class);
+	    		break;
+	    	case VIEW_INFO:
+	    		runCommand = context.getBean(ViewInfoCommand.class);
 	    		break;
 	    	default:
 	    			

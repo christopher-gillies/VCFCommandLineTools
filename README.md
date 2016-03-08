@@ -61,6 +61,18 @@ HG00246
 ...
 ```
 
+## Example select out allele frequency, allele count adn allele number from VCF
+
+This examples requires that you specify an input file with a list of variants. In this file, each line has the following format: "chr:pos:ref:alt". There should be no header line.
+The output option is optional.
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF=/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/FluidigmReferences/ExAC.r0.3.sites.vep.prefix.decomposed.normalized.pass.vcf.gz
+export variants=/Users/cgillies/Google\ Drive/Fluidigm_Pipeline/PAPER_ANALYSIS/exome_chip_sensitivity/singleton_variants.txt
+export out=/Users/cgillies/Google\ Drive/Fluidigm_Pipeline/PAPER_ANALYSIS/exome_chip_sensitivity/allele_frequency.txt
+$vcfTools --command viewInfo --vcf $VCF --info EXAC_AC_Adj --info EXAC_AN_Adj -info EXAC_AF --infile "$variants" --outfile "$out"
+```
+
 ## Help
 ```
 $vcfTools --help
