@@ -75,6 +75,7 @@ public class IlluminaManifestFileReader implements AutoCloseable, Iterable<Illum
 	public IlluminaManifestMarker next() {
 		IlluminaManifestMarker marker = null;
 		if(hasNext()) {		
+			//System.err.println(nextLine);
 			String vals[] = nextLine.split(delimiter);
 			Map<String,String> valsMap = new HashMap<>();
 			

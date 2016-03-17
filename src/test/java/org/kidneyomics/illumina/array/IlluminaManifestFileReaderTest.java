@@ -23,18 +23,45 @@ public class IlluminaManifestFileReaderTest {
 	}
 	
 	@Test
-	public void test() throws IOException {
+	public void test() throws Exception {
 		
 		ClassPathResource manifest = new ClassPathResource("manifest.test.chr20.csv");
 		
-		IlluminaManifestFileReader reader =  IlluminaManifestFileReader.create(manifest.getFile(), fasta);
 		
-		for(IlluminaManifestMarker marker : reader) {
-			System.err.println(marker);
+		int count = 0;
+		int noRefCount = 0;
+		int indelCount = 0;
+		
+		int indelAndNoRefCount = 0;
+		
+		try(IlluminaManifestFileReader reader =  IlluminaManifestFileReader.create(manifest.getFile(), fasta)) {
+
+			
+			for(IlluminaManifestMarker marker : reader) {
+				//System.err.println(marker);
+				count++;
+				if(!marker.hasReferenceAllele()) {
+					noRefCount++;
+				}
+				
+				if(marker.isIndel()) {
+					indelCount++;
+				}
+				
+				if(marker.isIndel() && !marker.hasReferenceAllele()) {
+					indelAndNoRefCount++;
+				}
+				System.err.println(marker.getName());
+				System.err.println(marker.toString());
+			}
 		}
 		
+		System.err.println("Count: " + count);
+		System.err.println("No ref count: " + noRefCount);
+		System.err.println("Indel count: " + indelCount);
+		System.err.println("Indel and no ref count: " + indelAndNoRefCount);
 		
-		
+		assertEquals(6209,count);
 	}
 
 }

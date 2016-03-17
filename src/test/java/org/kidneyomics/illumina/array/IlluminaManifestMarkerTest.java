@@ -10,6 +10,13 @@ import org.junit.Test;
 import org.kidneyomics.illumina.array.IlluminaManifestMarker.STRAND;
 import org.springframework.core.io.ClassPathResource;
 
+import htsjdk.variant.vcf.VCFEncoder;
+import htsjdk.variant.vcf.VCFFormatHeaderLine;
+import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
+import htsjdk.variant.vcf.VCFHeaderLineType;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
+
 public class IlluminaManifestMarkerTest {
 
 	static ReferenceFASTA fasta;
@@ -252,19 +259,22 @@ public class IlluminaManifestMarkerTest {
 		data.put("IlmnStrand", "BOT");
 		data.put("SNP", "[T/C]");
 		data.put("Chr", "20");
-		data.put("MapInfo", "10237223");
+		data.put("MapInfo", "10393913");
 		data.put("TopGenomicSeq", "TCAGTCACCTTTTGGTCACACATCCCATTTTAAAGATCCTGACAGCCTCCATACAGAAT[A/G]ATGTGTCAAGCTTCAGTGATTGTGGCTTATTCACAGCTATTCTTTGCTGCAACCTGATT");
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
 		
-		assertEquals("T",marker.getRefAllele());
-		assertEquals("A",marker.getAltAllele());
+		assertEquals("G",marker.getRefAllele());
+		assertEquals("T",marker.getAltAllele());
+		assertEquals("C",marker.getAlt2Allele());
 		
-		assertEquals("A",marker.getRefAlleleTop());
-		assertEquals("T",marker.getAltAlleleTop());
+		assertEquals("C",marker.getRefAlleleTop());
+		assertEquals("A",marker.getAltAlleleTop());
+		assertEquals("G",marker.getAlt2AlleleTop());
 		
-		assertEquals("tttacagataaaatactgaggaaatcacaagttaaaaatatacaCTGATGagcctttgtTgaaagcactttggtaatatacctcagctgtcattaatttattttctttgacctgtaaat".toUpperCase(),marker.getRefPlusSeq());
-		assertEquals("tttacagataaaatactgaggaaatcacaagttaaaaatatacaCTGATGagcctttgtAgaaagcactttggtaatatacctcagctgtcattaatttattttctttgacctgtaaat".toUpperCase(),marker.getAltPlusSeq());
+		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATGATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getRefPlusSeq());
+		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATTATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAltPlusSeq());
+		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATCATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAlt2PlusSeq());
 	}
 	
 	@Test
@@ -354,6 +364,40 @@ public class IlluminaManifestMarkerTest {
 		assertEquals("GGTGAGCATACAGGCAGGTTTACTTGTTAATATACTACGCACCAAACAAAGGAGGATCTGAGTCCACTGGGATTCGACAACCACAGGTCTCAGACTTGAGATAACTGATGCAAAGACTC",marker.getAltPlusSeq());
 	}
 	
+	
+	@Test
+	public void testThatSequenceParsedCorrectlyIndel4() {
+
+
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "20:3026341-AGCCCC-AGCCCCGCCCC-XXX");
+		data.put("Name", "20:3026341-AGCCCC-AGCCCCGCCCC");
+		data.put("IlmnStrand", "MINUS");
+		data.put("SNP", "[I/D]");
+		data.put("Chr", "20");
+		data.put("MapInfo", "3026341");
+		data.put("TopGenomicSeq", "ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGA[-/GCCCCGCCCC]GCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+		
+		assertTrue(marker.isIndel());
+		
+		assertEquals(3026340,marker.getPos());
+		assertEquals("AGCCCCG",marker.getRefAllele());
+		assertEquals("A",marker.getAltAllele());
+		assertEquals("AGCCCCGCCCC",marker.getAlt2Allele());
+		
+		assertEquals("AGCCCCG",marker.getRefAlleleTop());
+		assertEquals("D",marker.getAltAlleleTop());
+		assertEquals("I",marker.getAlt2AlleleTop());
+		
+		//TODO: validate
+		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getRefPlusSeq());
+		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAltPlusSeq());
+		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAlt2PlusSeq());
+	}
+	
 	@Test
 	public void testToVCFLine() {
 
@@ -372,6 +416,38 @@ public class IlluminaManifestMarkerTest {
 		
 		System.err.println(marker.toVCFLine());
 	}
+	
+	
+	@Test
+	public void testWriteVCF() {
+		
+		VCFEncoder encoder = IlluminaManifestMarker.encoder();
+		
+		HashMap<String,String> data = new HashMap<>();
+		data.put("IlmnID", "20:10393722-GAGTACTACTAA-G-0_P_F_2304231134");
+		data.put("Name", "20:10393722-GAGTACTACTAA-G");
+		data.put("IlmnStrand", "MINUS");
+		data.put("SNP", "[I/D]");
+		data.put("Chr", "20");
+		data.put("MapInfo", "10393722");
+		data.put("TopGenomicSeq", "GAGTCTTTGCATCAGTTATCTCAAGTCTGAGACCTGTGGTTGTCGAATCCCAGTGGACT[-/TTAGTAGTACT]CAGATCCTCCTTTGTTTGGTGCGTAGTATATTAACAAGTAAACCTGCCTGTATGCTCACC");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+		
+		String encoding = encoder.encode(marker.toVariantContext());
+		System.err.println(encoding);
+		
+		
+	}
+	
+//	@Test
+//	public void testComputeLongestSubsequenceFromStart() {
+//		String reference = "AGCCCCGCCCCGCCCCGCCccgccATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT".toUpperCase();
+//		String alt1 = "";
+//		String alt2 = "AGCCCCGCCCC";
+//		
+//		String result = IlluminaManifestMarker.computeLongestSubsequenceFromStart(reference, alt1, alt2);
+//	}
 	
 	
 	
