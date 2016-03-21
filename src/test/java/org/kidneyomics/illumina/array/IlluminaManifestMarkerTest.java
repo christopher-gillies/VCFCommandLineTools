@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 
 import org.junit.Test;
 import org.kidneyomics.illumina.array.IlluminaManifestMarker.STRAND;
+import org.kidneyomics.referenceseq.ReferenceFASTA;
 import org.springframework.core.io.ClassPathResource;
 
 import htsjdk.variant.vcf.VCFEncoder;
@@ -384,11 +385,11 @@ public class IlluminaManifestMarkerTest {
 		assertTrue(marker.isIndel());
 		
 		assertEquals(3026340,marker.getPos());
-		assertEquals("AGCCCCG",marker.getRefAllele());
+		assertEquals("AGCCCC",marker.getRefAllele());
 		assertEquals("A",marker.getAltAllele());
 		assertEquals("AGCCCCGCCCC",marker.getAlt2Allele());
 		
-		assertEquals("AGCCCCG",marker.getRefAlleleTop());
+		assertEquals("AGCCCC",marker.getRefAlleleTop());
 		assertEquals("D",marker.getAltAlleleTop());
 		assertEquals("I",marker.getAlt2AlleleTop());
 		

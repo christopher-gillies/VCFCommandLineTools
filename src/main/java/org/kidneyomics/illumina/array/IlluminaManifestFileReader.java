@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.kidneyomics.referenceseq.ReferenceFASTA;
+
 public class IlluminaManifestFileReader implements AutoCloseable, Iterable<IlluminaManifestMarker>, Iterator<IlluminaManifestMarker> {
 
 	

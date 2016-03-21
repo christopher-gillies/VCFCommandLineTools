@@ -58,6 +58,30 @@
 			<version>1.141</version>
 		</dependency>
 		
+		<!-- biojava -->
+		<!--
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava-core</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+		
+		
+		
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava-phylo</artifactId>
+			<version>4.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>alignment</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		
+		-->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -74,7 +98,23 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- 
+				 <configuration>
+					<jvmArguments>
+	            		-Xmx12G -Xms12G
+	          		</jvmArguments>
+          		 </configuration>
+          		  -->
 			</plugin>
+			
+			<plugin>
+				  <groupId>org.apache.maven.plugins</groupId>
+				  <artifactId>maven-surefire-plugin</artifactId>
+				  <configuration>
+				    <argLine>-Xmx8G -Xms8G</argLine>
+				  </configuration>
+			</plugin>
+			
 		</plugins>
 	</build>
 	

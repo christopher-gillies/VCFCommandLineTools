@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.kidneyomics.referenceseq.ReferenceFASTA;
+
 import htsjdk.samtools.util.SequenceUtil;
 import htsjdk.tribble.annotation.Strand;
 import htsjdk.variant.variantcontext.Allele;
@@ -380,7 +382,7 @@ public class IlluminaManifestMarker {
 
 					int endOfPartOne = refPlus.indexOf(topSeqPart1) + topSeqPart1.length() - 1;
 					int startOfPartTwo = refPlus.indexOf(topSeqPart2);
-					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo + 1);
+					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
 					
 					
 					instance.refPlusSeq = topSeqPart1 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + topSeqPart2;
@@ -416,14 +418,20 @@ public class IlluminaManifestMarker {
 				instance.altPlusSeq = bottomSeqAllele1;
 				instance.alt2PlusSeq = bottomSeqAllele2;
 				
+				String baseAfterChangeRC = reverseComplement(baseAfterChange);
 				
 				if(isIndel) {
 					
 					
-					//TODO: implement
-					//instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo + 1);
-					instance.altAllele = baseAfterChange + botAllele1;
-					instance.alt2Allele = baseBeforeChange + botAllele2;
+					int endOfPartOne = refPlus.indexOf(botSeqPart2) + botSeqPart2.length() - 1;
+					int startOfPartTwo = refPlus.indexOf(botSeqPart1);
+					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
+					
+					
+					instance.refPlusSeq = botSeqPart2 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + botSeqPart1;
+					
+					instance.altAllele = baseAfterChangeRC + botAllele1;
+					instance.alt2Allele = baseAfterChangeRC + botAllele2;
 					
 					instance.refAlleleTop = instance.refAllele;
 					if(topAllele1.equals("")) {

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.kidneyomics.referenceseq.ReferenceFASTA;
 import org.springframework.core.io.ClassPathResource;
 
 public class IlluminaManifestFileReaderTest {
@@ -51,7 +52,10 @@ public class IlluminaManifestFileReaderTest {
 				if(marker.isIndel() && !marker.hasReferenceAllele()) {
 					indelAndNoRefCount++;
 				}
-				System.err.println(marker.getName());
+				//System.err.println(marker.getName());
+				//System.err.println(marker.getRefAllele());
+				//System.err.println(marker.getAltAllele());
+				//System.err.println(marker.getAlt2Allele());
 				System.err.println(marker.toString());
 			}
 		}
