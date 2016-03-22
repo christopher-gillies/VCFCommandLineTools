@@ -73,6 +73,17 @@ export out=/Users/cgillies/Google\ Drive/Fluidigm_Pipeline/PAPER_ANALYSIS/exome_
 $vcfTools --command viewInfo --vcf $VCF --info EXAC_AC_Adj --info EXAC_AN_Adj -info EXAC_AF --infile "$variants" --outfile "$out"
 ```
 
+## Example make vcf from illumina manifest file
+
+```
+export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export REF="/Users/cgillies/Google Drive/1_7_2016_Megachip/"
+export MANIFEST="/Users/cgillies/Google Drive/1_7_2016_Megachip/"
+export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/sites.vcf.gz"
+$vcfTools --command makeVcfFromManifest --outfile "$OUTFILE" --ref "$REF" --manifest "$MANIFEST"
+```
+
+
 ## Help
 ```
 $vcfTools --help

@@ -65,10 +65,36 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		options.addOption(siteOption);
 		
+		Option refOption = Option.builder()
+		.argName("ref")
+		.longOpt("ref")
+		.desc("please specify a reference sequence")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.valueSeparator(' ')
+		.required(false)
+		.build();
+		
+		options.addOption(refOption);
+		
+		
+		Option manifestOption = Option.builder()
+		.argName("manifest")
+		.longOpt("manifest")
+		.desc("please specify a illumina manifest file")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.valueSeparator(' ')
+		.required(false)
+		.build();
+		
+		options.addOption(manifestOption);
+		
+		
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field.")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList, makeVcfFromManifest. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field. makeVcfFromManifest takes an input of a illumina manifest file and creates a vcf sites file for sites that have a reference allele")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -190,6 +216,14 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		if(cmd.hasOption("outfile")) {
 			applicationOptions.setOutFile(cmd.getOptionValue("outfile"));
+		}
+		
+		if(cmd.hasOption("ref")) {
+			applicationOptions.setReferenceSeq(cmd.getOptionValue("ref"));
+		}
+		
+		if(cmd.hasOption("manifest")) {
+			applicationOptions.setManifest(cmd.getOptionValue("manifest"));
 		}
 		
 		if(cmd.hasOption("infile")) {

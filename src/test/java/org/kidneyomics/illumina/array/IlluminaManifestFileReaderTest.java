@@ -39,6 +39,10 @@ public class IlluminaManifestFileReaderTest {
 
 			
 			for(IlluminaManifestMarker marker : reader) {
+				
+				if(marker.hasError()) {
+					continue;
+				}
 				//System.err.println(marker);
 				count++;
 				if(!marker.hasReferenceAllele()) {
@@ -56,7 +60,7 @@ public class IlluminaManifestFileReaderTest {
 				//System.err.println(marker.getRefAllele());
 				//System.err.println(marker.getAltAllele());
 				//System.err.println(marker.getAlt2Allele());
-				System.err.println(marker.toString());
+				//System.err.println(marker.toString());
 			}
 		}
 		
@@ -65,7 +69,7 @@ public class IlluminaManifestFileReaderTest {
 		System.err.println("Indel count: " + indelCount);
 		System.err.println("Indel and no ref count: " + indelAndNoRefCount);
 		
-		assertEquals(6209,count);
+		assertEquals(6034,count);
 	}
 
 }

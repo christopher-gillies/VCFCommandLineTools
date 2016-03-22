@@ -63,6 +63,10 @@ public class ReferenceFASTA {
 		ReferenceSequence seq = chromosomes.get(chr);
 		
 		if(seq == null) {
+			seq = chromosomes.get("chr" + chr);
+		}
+		
+		if(seq == null) {
 			throw new IllegalArgumentException("No chr found for " + chr);
 		}
 		

@@ -31,6 +31,9 @@ public class ApplicationOptions {
 	
 	private String inFile;
 	
+	private String referenceSeq;
+	private String manifest;
+	
 	private List<String> sites;
 	
 	private List<String> infos;
@@ -54,7 +57,26 @@ public class ApplicationOptions {
 		SELECT_SITES,
 		VIEW_GENOTYPES,
 		VIEW_INFO,
-		FIND_OVERLAPPING_SAMPLES_FROM_LIST
+		FIND_OVERLAPPING_SAMPLES_FROM_LIST,
+		MAKE_VCF_FROM_ILLUMINA
+	}
+
+	
+	
+	public String getReferenceSeq() {
+		return referenceSeq;
+	}
+
+	public void setReferenceSeq(String referenceSeq) {
+		this.referenceSeq = referenceSeq;
+	}
+
+	public String getManifest() {
+		return manifest;
+	}
+
+	public void setManifest(String manifest) {
+		this.manifest = manifest;
 	}
 
 	public String getJarLocation() {
@@ -106,6 +128,9 @@ public class ApplicationOptions {
 			break;
 		case "viewInfo":
 			command = Command.VIEW_INFO;
+			break;
+		case "makeVcfFromManifest":
+			command = Command.MAKE_VCF_FROM_ILLUMINA;
 			break;
 		default: 
 			command = Command.NONE;
@@ -223,7 +248,21 @@ public class ApplicationOptions {
 			if(infos.size() == 0) {
 				throw new IllegalArgumentException("Please specify info to select");
 			}
+			break;
+		case MAKE_VCF_FROM_ILLUMINA:
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
 			
+			if(StringUtils.isEmpty(this.getManifest())) {
+				throw new IllegalStateException("Please specify a manifest file");
+			}
+			
+			if(StringUtils.isEmpty(this.getReferenceSeq())) {
+				throw new IllegalStateException("Please specify a reference sequence file");
+			}
+			
+			break;	
 		case HELP:
 			break;
 		default:

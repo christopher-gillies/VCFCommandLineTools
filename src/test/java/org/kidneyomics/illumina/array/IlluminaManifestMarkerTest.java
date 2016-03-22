@@ -264,18 +264,18 @@ public class IlluminaManifestMarkerTest {
 		data.put("TopGenomicSeq", "TCAGTCACCTTTTGGTCACACATCCCATTTTAAAGATCCTGACAGCCTCCATACAGAAT[A/G]ATGTGTCAAGCTTCAGTGATTGTGGCTTATTCACAGCTATTCTTTGCTGCAACCTGATT");
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
-		
-		assertEquals("G",marker.getRefAllele());
-		assertEquals("T",marker.getAltAllele());
-		assertEquals("C",marker.getAlt2Allele());
-		
-		assertEquals("C",marker.getRefAlleleTop());
-		assertEquals("A",marker.getAltAlleleTop());
-		assertEquals("G",marker.getAlt2AlleleTop());
-		
-		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATGATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getRefPlusSeq());
-		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATTATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAltPlusSeq());
-		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATCATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAlt2PlusSeq());
+		assertTrue(marker.hasError());
+//		assertEquals("G",marker.getRefAllele());
+//		assertEquals("T",marker.getAltAllele());
+//		assertEquals("C",marker.getAlt2Allele());
+//		
+//		assertEquals("C",marker.getRefAlleleTop());
+//		assertEquals("A",marker.getAltAlleleTop());
+//		assertEquals("G",marker.getAlt2AlleleTop());
+//		
+//		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATGATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getRefPlusSeq());
+//		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATTATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAltPlusSeq());
+//		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATCATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAlt2PlusSeq());
 	}
 	
 	@Test
@@ -384,19 +384,21 @@ public class IlluminaManifestMarkerTest {
 		
 		assertTrue(marker.isIndel());
 		
-		assertEquals(3026340,marker.getPos());
-		assertEquals("AGCCCC",marker.getRefAllele());
-		assertEquals("A",marker.getAltAllele());
-		assertEquals("AGCCCCGCCCC",marker.getAlt2Allele());
+		assertTrue(marker.hasError());
 		
-		assertEquals("AGCCCC",marker.getRefAlleleTop());
-		assertEquals("D",marker.getAltAlleleTop());
-		assertEquals("I",marker.getAlt2AlleleTop());
-		
-		//TODO: validate
-		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getRefPlusSeq());
-		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAltPlusSeq());
-		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAlt2PlusSeq());
+//		assertEquals(3026340,marker.getPos());
+//		assertEquals("AGCCCC",marker.getRefAllele());
+//		assertEquals("A",marker.getAltAllele());
+//		assertEquals("AGCCCCGCCCC",marker.getAlt2Allele());
+//		
+//		assertEquals("AGCCCC",marker.getRefAlleleTop());
+//		assertEquals("D",marker.getAltAlleleTop());
+//		assertEquals("I",marker.getAlt2AlleleTop());
+//		
+//		//TODO: validate
+//		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getRefPlusSeq());
+//		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAltPlusSeq());
+//		assertEquals("ACGAGACCAGTGTCCTGAGACATGACCGCCACCTCTCCCTCCGCAGACCGCAGCCCGAGAGCCCCGCCCCGCCCCGCCCCGCCATCCTCCAATAAAGTGTGAGGTTCTCCGAAGCTGTTGCGTCGAGTT",marker.getAlt2PlusSeq());
 	}
 	
 	@Test
@@ -434,6 +436,8 @@ public class IlluminaManifestMarkerTest {
 		data.put("TopGenomicSeq", "GAGTCTTTGCATCAGTTATCTCAAGTCTGAGACCTGTGGTTGTCGAATCCCAGTGGACT[-/TTAGTAGTACT]CAGATCCTCCTTTGTTTGGTGCGTAGTATATTAACAAGTAAACCTGCCTGTATGCTCACC");
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+		
+		System.err.println(IlluminaManifestMarker.header().toString());
 		
 		String encoding = encoder.encode(marker.toVariantContext());
 		System.err.println(encoding);

@@ -42,7 +42,7 @@ public class IlluminaManifestMarker {
 	
 	private int pos;
 	
-	
+	private boolean error = false;
 	private boolean topStrandIsPlus;
 	private boolean indel;
 	private boolean hasRefAllele = true;
@@ -107,6 +107,9 @@ public class IlluminaManifestMarker {
 		return encoder;
 	}
 	
+	public boolean hasError() {
+		return error;
+	}
 	
 	private IlluminaManifestMarker() {
 		
@@ -143,6 +146,13 @@ public class IlluminaManifestMarker {
 		instance.chr = vals.get("Chr");
 		instance.pos = Integer.parseInt(vals.get("MapInfo"));
 		instance.topStrandSeqBase = vals.get("TopGenomicSeq").toUpperCase();
+		
+		
+		if(instance.pos == 0 || instance.chr.equals("0")) {
+			instance.error = true;
+			return instance;
+		}
+		
 		
 		//Assign alleles
 		//allele 1 = numerator of [A / T] = A
@@ -337,118 +347,120 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = bottomSeqAllele2;
 			instance.altPlusSeq = bottomSeqAllele1;
 		} else {
-			//could be neither sequence matches the reference
-			//throw new IllegalStateException("Count not match reference for " + instance.illmId);
-			
 			instance.hasRefAllele = false;
-			String botSeqPart2 = reverseComplement(topSeqPart1);
-			String botSeqPart1 = reverseComplement(topSeqPart2);
-			instance.refAllele = reference.query(instance.chr, instance.pos, instance.pos);
-			
-			
-			//check if topseq matches the reference
-			
-			
-			
-			if(refPlus.contains(topSeqPart1) && refPlus.contains(topSeqPart2)) {
-				instance.topStrandIsPlus = true;
-				
-				instance.refAlleleTop = instance.refAllele;
-				instance.altAlleleTop = topAllele1;
-				instance.alt2AlleleTop = topAllele2;
-				
-				//instance.refAllele = instance.refAlleleTop;
-				instance.altAllele = instance.altAlleleTop;
-				instance.alt2Allele = instance.alt2AlleleTop;
-				
-				instance.refPlusSeq = reference.query(instance.chr, instance.pos - topSeqPart1.length(), instance.pos + topSeqPart2.length());
-				instance.altPlusSeq = topSeqAllele1;
-				instance.alt2PlusSeq = topSeqAllele2;
-				
-				if(isIndel) {
-					
-					//CASE WHERE ONE EVENT IS AN INSERTION AND OTHER EVENT IS A DELETION
-					//let the reference allele be the entire sequence region
-					//let I be the insertion event [AAAGGG]
-					//let D be the deletion event [-]
-					
-					//B = BEFORE
-					//A = AFTER
-					//SEQUENCE1......B[-/CHANGE]A.....SEQUENCE2
-					//ALT1 = B
-					//ALT2 = B + CHANGE
-					//REF = B + PART OF CHANGE
-					
-
-					int endOfPartOne = refPlus.indexOf(topSeqPart1) + topSeqPart1.length() - 1;
-					int startOfPartTwo = refPlus.indexOf(topSeqPart2);
-					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
-					
-					
-					instance.refPlusSeq = topSeqPart1 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + topSeqPart2;
-					
-					instance.altAllele = baseBeforeChange + topAllele1;
-					instance.alt2Allele = baseBeforeChange + topAllele2;
-					
-					instance.refAlleleTop = instance.refAllele;
-					if(topAllele1.equals("")) {
-						instance.altAlleleTop = "D";
-						instance.alt2AlleleTop = "I";
-					} else {
-						instance.altAlleleTop = "I";
-						instance.alt2AlleleTop = "D";
-					}
-					
-					instance.pos = instance.pos - 1;
-					
-				}
-				
-			} else if(refPlus.contains(botSeqPart2) && refPlus.contains(botSeqPart1)) {
-				instance.topStrandIsPlus = false;
-				
-				instance.refAlleleTop = reverseComplement(instance.refAllele);
-				instance.altAlleleTop = topAllele1;
-				instance.alt2AlleleTop = topAllele2;
-				
-				//instance.refAllele = instance.refAllele;
-				instance.altAllele =  botAllele1;
-				instance.alt2Allele = botAllele2;
-				
-				instance.refPlusSeq = reference.query(instance.chr, instance.pos - topSeqPart1.length(), instance.pos + topSeqPart2.length());
-				instance.altPlusSeq = bottomSeqAllele1;
-				instance.alt2PlusSeq = bottomSeqAllele2;
-				
-				String baseAfterChangeRC = reverseComplement(baseAfterChange);
-				
-				if(isIndel) {
-					
-					
-					int endOfPartOne = refPlus.indexOf(botSeqPart2) + botSeqPart2.length() - 1;
-					int startOfPartTwo = refPlus.indexOf(botSeqPart1);
-					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
-					
-					
-					instance.refPlusSeq = botSeqPart2 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + botSeqPart1;
-					
-					instance.altAllele = baseAfterChangeRC + botAllele1;
-					instance.alt2Allele = baseAfterChangeRC + botAllele2;
-					
-					instance.refAlleleTop = instance.refAllele;
-					if(topAllele1.equals("")) {
-						instance.altAlleleTop = "D";
-						instance.alt2AlleleTop = "I";
-					} else {
-						instance.altAlleleTop = "I";
-						instance.alt2AlleleTop = "D";
-					}
-					
-					instance.pos = instance.pos - 1;
-					
-				}
-
-			} else {
-				throw new IllegalStateException("Count not match nearby reference sequence " + instance.illmId);
-			}
+			instance.error = true;
+//			//could be neither sequence matches the reference
+//			//throw new IllegalStateException("Count not match reference for " + instance.illmId);
+//			
+//			instance.hasRefAllele = false;
+//			String botSeqPart2 = reverseComplement(topSeqPart1);
+//			String botSeqPart1 = reverseComplement(topSeqPart2);
+//			instance.refAllele = reference.query(instance.chr, instance.pos, instance.pos);
+//			
+//			
+//			//check if topseq matches the reference
+//			
+//			
+//			
+//			if(refPlus.contains(topSeqPart1) && refPlus.contains(topSeqPart2)) {
+//				instance.topStrandIsPlus = true;
+//				
+//				instance.refAlleleTop = instance.refAllele;
+//				instance.altAlleleTop = topAllele1;
+//				instance.alt2AlleleTop = topAllele2;
+//				
+//				//instance.refAllele = instance.refAlleleTop;
+//				instance.altAllele = instance.altAlleleTop;
+//				instance.alt2Allele = instance.alt2AlleleTop;
+//				
+//				instance.refPlusSeq = reference.query(instance.chr, instance.pos - topSeqPart1.length(), instance.pos + topSeqPart2.length());
+//				instance.altPlusSeq = topSeqAllele1;
+//				instance.alt2PlusSeq = topSeqAllele2;
+//				
+//				if(isIndel) {
+//					
+//					//CASE WHERE ONE EVENT IS AN INSERTION AND OTHER EVENT IS A DELETION
+//					//let the reference allele be the entire sequence region
+//					//let I be the insertion event [AAAGGG]
+//					//let D be the deletion event [-]
+//					
+//					//B = BEFORE
+//					//A = AFTER
+//					//SEQUENCE1......B[-/CHANGE]A.....SEQUENCE2
+//					//ALT1 = B
+//					//ALT2 = B + CHANGE
+//					//REF = B + PART OF CHANGE
+//					
+//
+//					int endOfPartOne = refPlus.indexOf(topSeqPart1) + topSeqPart1.length() - 1;
+//					int startOfPartTwo = refPlus.indexOf(topSeqPart2);
+//					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
+//					
+//					
+//					instance.refPlusSeq = topSeqPart1 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + topSeqPart2;
+//					
+//					instance.altAllele = baseBeforeChange + topAllele1;
+//					instance.alt2Allele = baseBeforeChange + topAllele2;
+//					
+//					instance.refAlleleTop = instance.refAllele;
+//					if(topAllele1.equals("")) {
+//						instance.altAlleleTop = "D";
+//						instance.alt2AlleleTop = "I";
+//					} else {
+//						instance.altAlleleTop = "I";
+//						instance.alt2AlleleTop = "D";
+//					}
+//					
+//					instance.pos = instance.pos - 1;
+//					
+//				}
+//				
+//			} else if(refPlus.contains(botSeqPart2) && refPlus.contains(botSeqPart1)) {
+//				instance.topStrandIsPlus = false;
+//				
+//				instance.refAlleleTop = reverseComplement(instance.refAllele);
+//				instance.altAlleleTop = topAllele1;
+//				instance.alt2AlleleTop = topAllele2;
+//				
+//				//instance.refAllele = instance.refAllele;
+//				instance.altAllele =  botAllele1;
+//				instance.alt2Allele = botAllele2;
+//				
+//				instance.refPlusSeq = reference.query(instance.chr, instance.pos - topSeqPart1.length(), instance.pos + topSeqPart2.length());
+//				instance.altPlusSeq = bottomSeqAllele1;
+//				instance.alt2PlusSeq = bottomSeqAllele2;
+//				
+//				String baseAfterChangeRC = reverseComplement(baseAfterChange);
+//				
+//				if(isIndel) {
+//					
+//					
+//					int endOfPartOne = refPlus.indexOf(botSeqPart2) + botSeqPart2.length() - 1;
+//					int startOfPartTwo = refPlus.indexOf(botSeqPart1);
+//					instance.refAllele  = refPlus.substring(endOfPartOne, startOfPartTwo);
+//					
+//					
+//					instance.refPlusSeq = botSeqPart2 + refPlus.substring(endOfPartOne + 1, startOfPartTwo) + botSeqPart1;
+//					
+//					instance.altAllele = baseAfterChangeRC + botAllele1;
+//					instance.alt2Allele = baseAfterChangeRC + botAllele2;
+//					
+//					instance.refAlleleTop = instance.refAllele;
+//					if(topAllele1.equals("")) {
+//						instance.altAlleleTop = "D";
+//						instance.alt2AlleleTop = "I";
+//					} else {
+//						instance.altAlleleTop = "I";
+//						instance.alt2AlleleTop = "D";
+//					}
+//					
+//					instance.pos = instance.pos - 1;
+//					
+//				}
+//
+//			} else {
+//				throw new IllegalStateException("Count not match nearby reference sequence " + instance.illmId);
+//			}
 		}
 		
 		
@@ -560,6 +572,9 @@ public class IlluminaManifestMarker {
 	}
 	
 	public VariantContext toVariantContext() {
+		if(this.hasError()) {
+			return null;
+		}
 		List<Allele> alleles = new LinkedList<Allele>();
 		Allele ref = Allele.create(this.refAllele, true);
 		alleles.add(ref);

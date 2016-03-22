@@ -46,6 +46,9 @@ public class VcfCommandLineToolsApplication {
 	    	case VIEW_INFO:
 	    		runCommand = context.getBean(ViewInfoCommand.class);
 	    		break;
+	    	case MAKE_VCF_FROM_ILLUMINA:
+	    		runCommand = context.getBean(ConvertMegaManifestToVCF.class);
+	    		break;
 	    	default:
 	    			
 	    	}
