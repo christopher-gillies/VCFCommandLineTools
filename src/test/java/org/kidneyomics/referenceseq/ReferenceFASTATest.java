@@ -114,11 +114,21 @@ public class ReferenceFASTATest {
 		assertEquals(queryRes3,fasta.queryReverseComplement("20", 1000000, 1001000));
 	}
 	
+	
+	@Test
+	public void readFASTAOutsideChr() throws IOException {
+
+		String result1 = fasta.query("20", -1000, 1002396400);
+		assertNotNull(result1);
+	}
+	
 	@Test
 	public void charset() {
 		System.err.println(Charset.defaultCharset().name());
 	}
 	
+	
+
 	
 	@Test
 	public void testBuildKmer() {
@@ -168,5 +178,26 @@ public class ReferenceFASTATest {
 		String input2 = "CATT";
 		KmerKey key2 = new KmerKey(input2);
 		assertEquals(1 * 5 * 5 * 5 + 2 * 5 + 2,key2.hashCode());
+	}
+	
+	
+	@Test
+	public void testSubStringIgnoreN() {
+		String test =   "AAGCAATGAGGGCAGACATGTTTATTTGAANAGGAGACAGCTACATTGAAATCACAAAAA";
+		String source = "AAGCAATGAGGGCAGACATGTTTATTTGAAGAGGAGACAGCTACATTGAAATCACAAAAA";
+		
+		assertTrue(ReferenceFASTA.containsIgnoreN(source, test));
+		
+		assertFalse(ReferenceFASTA.containsIgnoreN(source, "AAGCAATGAGGGCAGACATTGTTTATTTG"));
+		
+		assertTrue(ReferenceFASTA.containsIgnoreN(source,"AAGCAATGAGGGCAGACATGTTTATTTGAAN"));
+		
+		assertTrue(ReferenceFASTA.containsIgnoreN(source,"GAGGGCAGACATGTTTAT"));
+		
+		assertTrue(ReferenceFASTA.containsIgnoreN(source,"TGAAN"));
+		
+		assertFalse(ReferenceFASTA.containsIgnoreN(source,"GTTTATTTGAT"));
+		
+		assertTrue(ReferenceFASTA.containsIgnoreN(source,""));
 	}
 }

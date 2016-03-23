@@ -60,6 +60,12 @@ public class ReferenceFASTA {
 	 * @return the plus reference sequence between these positions
 	 */
 	public String query(String chr, int start, int end, boolean reverseComplement) {
+		
+		//for psuedo-autosomal regions just query the x chromosome
+		if(chr.equalsIgnoreCase("XY")) {
+			chr = "X";
+		}
+		
 		ReferenceSequence seq = chromosomes.get(chr);
 		
 		if(seq == null) {
@@ -74,9 +80,22 @@ public class ReferenceFASTA {
 			throw new IllegalArgumentException("Start cannot be greater than end");
 		}
 		
-		byte[] res = new byte[end - start + 1];
+		//set the start to be 1 if it is less than 1
+		if(start < 1) {
+			start = 1;
+		}
+				
 		
 		byte[] all = seq.getBases();
+		
+		//truncate the query if the end position is greater than the end
+		if(end >= all.length) {
+			end = all.length;
+		}
+		
+		
+		byte[] res = new byte[end - start + 1];
+		
 		
 		//include the end position (end - 1)
 		int index = 0;
@@ -224,5 +243,44 @@ public class ReferenceFASTA {
 		System.err.println("Finished searching");
 		
 		return res;
-	}	
+	}
+	
+	/**
+	 * 
+	 * @param source -- sequence to use as the base of contains
+	 * @param test -- sequence to search for
+	 * @return true if test is a substring of source ignoring N characters
+	 */
+	public static boolean containsIgnoreN(CharSequence source, CharSequence test) {
+		if(source.length() < test.length()) {
+			return false;
+		}
+		
+		/*
+		 * source:  AAAA length = 4
+		 * dest:	AAAA length = 4
+		 */
+		for(int i = 0; i < source.length() - test.length() + 1; i++) {
+			boolean res = true;
+			for(int j = 0; j < test.length(); j++) {
+				char sourceChar = source.charAt(i + j);
+				char destChar = test.charAt(j);
+				if(destChar == 'N') {
+					continue;
+				}
+				
+				if(sourceChar != destChar) {
+					res = false;
+					break;
+				}
+				
+			}
+			
+			if(res) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

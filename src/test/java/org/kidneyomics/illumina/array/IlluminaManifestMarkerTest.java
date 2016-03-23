@@ -249,6 +249,51 @@ public class IlluminaManifestMarkerTest {
 	
 	
 	@Test
+	public void testThatSequenceParsedCorrectly6() {
+
+		
+		//case 3
+		//top is minus strand
+		//reference = T
+		//alternative = A
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "20:9464244-C-T-0_T_R_2304199051");
+		data.put("Name", "20:9464244-C-T");
+		data.put("IlmnStrand", "TOP");
+		data.put("SNP", "[A/G]");
+		data.put("Chr", "20");
+		data.put("MapInfo", "9464244");
+		data.put("TopGenomicSeq", "gccttctgttagatttgcacaagtgatgaagaaggagaagctagagttttgaacgaggc[A/G]tccctaagataacctcagcaataaaataataggggtattccttcttcactctccataaT");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+		
+		assertTrue(marker.surroundingSequenceMatches());
+		
+//		assertEquals("T",marker.getRefAllele());
+//		assertEquals("A",marker.getAltAllele());
+//		
+//		assertEquals("A",marker.getRefAlleleTop());
+//		assertEquals("T",marker.getAltAlleleTop());
+//		
+//		assertEquals("tttacagataaaatactgaggaaatcacaagttaaaaatatacaCTGATGagcctttgtTgaaagcactttggtaatatacctcagctgtcattaatttattttctttgacctgtaaat".toUpperCase(),marker.getRefPlusSeq());
+//		assertEquals("tttacagataaaatactgaggaaatcacaagttaaaaatatacaCTGATGagcctttgtAgaaagcactttggtaatatacctcagctgtcattaatttattttctttgacctgtaaat".toUpperCase(),marker.getAltPlusSeq());
+//	
+	}
+	
+
+	
+	@Test
+	public void testReplaceAll() {
+		String data = "CYATCGAATCCGCTATCCAGACTTGGTATAWCCAAGGAATCATTATTTAATGAACAAGTA[C/-]AGGAGAAATGTAGATGATGAGAAATGAGGAAAAGAGAAATGGAAACACAGGGACAACGGC";
+		
+		String result = data.replaceAll(IlluminaManifestMarker.replacePattern.pattern(),"");
+		
+		assertEquals("CATCGAATCCGCTATCCAGACTTGGTATACCAAGGAATCATTATTTAATGAACAAGTA[C/-]AGGAGAAATGTAGATGATGAGAAATGAGGAAAAGAGAAATGGAAACACAGGGACAACGGC",result);
+		
+	}
+	
+	@Test
 	public void testThatSequenceParsedCorrectly5() {
 
 		
@@ -277,6 +322,52 @@ public class IlluminaManifestMarkerTest {
 //		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATTATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAltPlusSeq());
 //		assertEquals("AATCAGGTTGCAGCAAAGAATAGCTGTGAATAAGCCACAATCACTGAAGCTTGACACATCATTCTGTATGGAGGCTGTCAGGATCTTTAAAATGGGATGTGTGACCAAAAGGTGACTGA".toUpperCase(),marker.getAlt2PlusSeq());
 	}
+	
+	
+	@Test
+	public void testThatSequenceParsedCorrectly7() {
+
+		
+
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "20:10393913-C-T-0_B_F_2304273903");
+		data.put("Name", "20:10393913-C-T");
+		data.put("IlmnStrand", "BOT");
+		data.put("SNP", "[T/C]");
+		data.put("Chr", "20");
+		data.put("MapInfo", "10393913");
+		data.put("TopGenomicSeq", "TCAGTCACCTTTTGGTCACACATCCCATTTTAAAGATCCTGACAGCCTCCATACAGAAT[A/G]ATGTGTCAAGCTTCAGTGATTGTGGCTTATTCACAGCTATTCTTTGCTGCAACCTGATT");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+
+		
+	}
+	
+	
+	@Test
+	public void testThatSequenceParsedCorrectly8() throws IOException {
+
+		ClassPathResource resource = new ClassPathResource("chr19.fa.gz");
+		
+		ReferenceFASTA chr19 = ReferenceFASTA.create(resource.getFile());
+		
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "seq-t1d-19-60034052-C-T-1_T_R_2304705745");
+		data.put("Name", "seq-t1d-19-60034052-C-T-1_T_R_2304705745");
+		data.put("IlmnStrand", "TOP");
+		data.put("SNP", "[A/G]");
+		data.put("Chr", "19");
+		data.put("MapInfo", "55342240");
+		data.put("TopGenomicSeq", "TATGTGGACATGGTAATGATAACAGCGGTTTCTTTCAGCGAATACAGTGTCACATTACCT[A/G]AAGCAATGAGGGCAGACATGTTTATTTGAANAGGAGACAGCTACATTGAAATCACAAAAA");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, chr19);
+		
+		assertTrue(marker.surroundingSequenceMatches());
+		
+	}
+	
 	
 	@Test
 	public void testThatSequenceParsedCorrectlyIndel1() {

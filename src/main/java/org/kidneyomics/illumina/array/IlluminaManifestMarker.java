@@ -42,7 +42,8 @@ public class IlluminaManifestMarker {
 	
 	private int pos;
 	
-	private boolean error = false;
+	private boolean surroundingSequenceMatches = true;
+	private boolean missingPos = false;
 	private boolean topStrandIsPlus;
 	private boolean indel;
 	private boolean hasRefAllele = true;
@@ -52,7 +53,7 @@ public class IlluminaManifestMarker {
 	
 	static final Pattern snpPattern = Pattern.compile("^\\[([^/]+)/([^\\]]+)\\]$");
 	static final Pattern seqPattern = Pattern.compile("^([ACTGNactgn]+([ACTGNactgn]))\\[([^/]+)/([^\\]]+)\\](([ACTGNactgn])[ACTGNactgn]+)$");
-	
+	static final Pattern replacePattern = Pattern.compile("[^\\[\\]\\/ACTGNactgn-]");
 	private final static VCFHeader header;
 	private final static VCFEncoder encoder;
 	
@@ -108,7 +109,15 @@ public class IlluminaManifestMarker {
 	}
 	
 	public boolean hasError() {
-		return error;
+		return missingPos || !hasRefAllele;
+	}
+	
+	public boolean missingPos() {
+		return missingPos;
+	}
+	
+	public boolean surroundingSequenceMatches() {
+		return surroundingSequenceMatches;
 	}
 	
 	private IlluminaManifestMarker() {
@@ -147,9 +156,12 @@ public class IlluminaManifestMarker {
 		instance.pos = Integer.parseInt(vals.get("MapInfo"));
 		instance.topStrandSeqBase = vals.get("TopGenomicSeq").toUpperCase();
 		
+		//clean up top-strand to remove non-ACTGN bases
+		
+		instance.topStrandSeqBase = instance.topStrandSeqBase.replaceAll(replacePattern.pattern(), "");
 		
 		if(instance.pos == 0 || instance.chr.equals("0")) {
-			instance.error = true;
+			instance.missingPos = true;
 			return instance;
 		}
 		
@@ -213,15 +225,22 @@ public class IlluminaManifestMarker {
 			throw new IllegalStateException("Matcher could not extract alleles from " + instance.snpString + " at " + instance.illmId);
 		}
 		
+		//convert to uppercase
+		topSeqPart1 = topSeqPart1.toUpperCase();
+		topSeqPart2 = topSeqPart2.toUpperCase();
+		topAllele1 = topAllele1.toUpperCase();
+		topAllele2 = topAllele2.toUpperCase();
+		
 		// Step (1) assign the plus or minus to top strand
 		String topSeqAllele1 = topSeqPart1 + topAllele1 + topSeqPart2;
 		String topSeqAllele2 = topSeqPart1 + topAllele2 + topSeqPart2;
 		String bottomSeqAllele1 = reverseComplement(topSeqAllele1);
 		String bottomSeqAllele2 =  reverseComplement(topSeqAllele2);
 		
-		String refPlus = reference.query(instance.chr, instance.pos - 1000, instance.pos + 1000);
+		//convert to upper case
+		String refPlus = reference.query(instance.chr, instance.pos - 1000, instance.pos + 1000).toUpperCase();
 		
-		if(refPlus.contains(topSeqAllele1)) {
+		if( ReferenceFASTA.containsIgnoreN(refPlus, topSeqAllele1)) {
 			
 			instance.topStrandIsPlus = true;
 			
@@ -252,7 +271,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = topSeqAllele1;
 			instance.altPlusSeq = topSeqAllele2;
 			
-		} else if(refPlus.contains(topSeqAllele2)) {
+		} else if(ReferenceFASTA.containsIgnoreN(refPlus, topSeqAllele2)) {
 			
 			instance.topStrandIsPlus = true;
 			
@@ -282,7 +301,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = topSeqAllele2;
 			instance.altPlusSeq = topSeqAllele1;
 			
-		} else if(refPlus.contains(bottomSeqAllele1)) {
+		} else if(ReferenceFASTA.containsIgnoreN(refPlus, bottomSeqAllele1)) {
 			String baseAfterChangeRC = reverseComplement(baseAfterChange);
 			
 			instance.topStrandIsPlus = false;
@@ -314,7 +333,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = bottomSeqAllele1;
 			instance.altPlusSeq = bottomSeqAllele2;
 			
-		} else if(refPlus.contains(bottomSeqAllele2)) {
+		} else if(ReferenceFASTA.containsIgnoreN(refPlus, bottomSeqAllele2) ) {
 			String baseAfterChangeRC = reverseComplement(baseAfterChange);
 			
 			instance.topStrandIsPlus = false;
@@ -348,7 +367,24 @@ public class IlluminaManifestMarker {
 			instance.altPlusSeq = bottomSeqAllele1;
 		} else {
 			instance.hasRefAllele = false;
-			instance.error = true;
+			
+			String botSeqPart2 = reverseComplement(topSeqPart1);
+			String botSeqPart1 = reverseComplement(topSeqPart2);
+			
+			
+			if(ReferenceFASTA.containsIgnoreN(refPlus, topSeqPart1) && ReferenceFASTA.containsIgnoreN(refPlus, topSeqPart2) ) {
+				
+			} else if(ReferenceFASTA.containsIgnoreN(refPlus, botSeqPart2) && ReferenceFASTA.containsIgnoreN(refPlus, botSeqPart1)) {
+				
+			} else {
+				instance.surroundingSequenceMatches = false;
+				//System.err.println("Skipping..." + instance.name);
+				//System.err.println(topSeqAllele1);
+				//System.err.println(topSeqAllele2);
+				//System.err.println(bottomSeqAllele1);
+				//System.err.println(bottomSeqAllele2);
+			}
+			
 //			//could be neither sequence matches the reference
 //			//throw new IllegalStateException("Count not match reference for " + instance.illmId);
 //			
