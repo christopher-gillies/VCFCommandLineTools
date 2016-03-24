@@ -249,9 +249,9 @@ public class ReferenceFASTA {
 	 * 
 	 * @param source -- sequence to use as the base of contains
 	 * @param test -- sequence to search for
-	 * @return true if test is a substring of source ignoring N characters
+	 * @return true if test is a substring of source using IUPAC 
 	 */
-	public static boolean containsIgnoreN(CharSequence source, CharSequence test) {
+	public static boolean containsUseIUPAC(CharSequence source, CharSequence test) {
 		if(source.length() < test.length()) {
 			return false;
 		}
@@ -265,11 +265,8 @@ public class ReferenceFASTA {
 			for(int j = 0; j < test.length(); j++) {
 				char sourceChar = source.charAt(i + j);
 				char destChar = test.charAt(j);
-				if(destChar == 'N') {
-					continue;
-				}
 				
-				if(sourceChar != destChar) {
+				if(!NucleotideMatcher.matches(sourceChar, destChar)) {
 					res = false;
 					break;
 				}

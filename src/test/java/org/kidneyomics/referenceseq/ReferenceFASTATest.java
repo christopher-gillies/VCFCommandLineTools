@@ -182,22 +182,22 @@ public class ReferenceFASTATest {
 	
 	
 	@Test
-	public void testSubStringIgnoreN() {
+	public void testContainsUseIUPAC() {
 		String test =   "AAGCAATGAGGGCAGACATGTTTATTTGAANAGGAGACAGCTACATTGAAATCACAAAAA";
 		String source = "AAGCAATGAGGGCAGACATGTTTATTTGAAGAGGAGACAGCTACATTGAAATCACAAAAA";
 		
-		assertTrue(ReferenceFASTA.containsIgnoreN(source, test));
+		assertTrue(ReferenceFASTA.containsUseIUPAC(source, test));
 		
-		assertFalse(ReferenceFASTA.containsIgnoreN(source, "AAGCAATGAGGGCAGACATTGTTTATTTG"));
+		assertFalse(ReferenceFASTA.containsUseIUPAC(source, "AAGCAATGAGGGCAGACATTGTTTATTTG"));
 		
-		assertTrue(ReferenceFASTA.containsIgnoreN(source,"AAGCAATGAGGGCAGACATGTTTATTTGAAN"));
+		assertTrue(ReferenceFASTA.containsUseIUPAC(source,"AAGCAATGAGGGCAGACATGTTTATTTGAAN"));
 		
-		assertTrue(ReferenceFASTA.containsIgnoreN(source,"GAGGGCAGACATGTTTAT"));
+		assertTrue(ReferenceFASTA.containsUseIUPAC(source,"GAGGGCAGACATGTTTAT"));
 		
-		assertTrue(ReferenceFASTA.containsIgnoreN(source,"TGAAN"));
+		assertTrue(ReferenceFASTA.containsUseIUPAC(source,"TGAAN"));
 		
-		assertFalse(ReferenceFASTA.containsIgnoreN(source,"GTTTATTTGAT"));
+		assertFalse(ReferenceFASTA.containsUseIUPAC(source,"GTTTATTTGAT"));
 		
-		assertTrue(ReferenceFASTA.containsIgnoreN(source,""));
+		assertTrue(ReferenceFASTA.containsUseIUPAC(source,""));
 	}
 }

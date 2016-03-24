@@ -52,7 +52,7 @@ public class IlluminaManifestMarker {
 	
 	
 	static final Pattern snpPattern = Pattern.compile("^\\[([^/]+)/([^\\]]+)\\]$");
-	static final Pattern seqPattern = Pattern.compile("^([ACTGNactgn]+([ACTGNactgn]))\\[([^/]+)/([^\\]]+)\\](([ACTGNactgn])[ACTGNactgn]+)$");
+	static final Pattern seqPattern = Pattern.compile("^([ACTGNURYSWKMBDHVactgnuryswkmbdhv]+([ACTGNURYSWKMBDHVactgnuryswkmbdhv]))\\[([^/]+)/([^\\]]+)\\](([ACTGNURYSWKMBDHVactgnuryswkmbdhv])[ACTGNURYSWKMBDHVactgnuryswkmbdhv]+)$");
 	static final Pattern replacePattern = Pattern.compile("[^\\[\\]\\/ACTGNactgn-]");
 	private final static VCFHeader header;
 	private final static VCFEncoder encoder;
@@ -157,8 +157,8 @@ public class IlluminaManifestMarker {
 		instance.topStrandSeqBase = vals.get("TopGenomicSeq").toUpperCase();
 		
 		//clean up top-strand to remove non-ACTGN bases
-		
-		instance.topStrandSeqBase = instance.topStrandSeqBase.replaceAll(replacePattern.pattern(), "");
+		//we do not use this anymore as I implemented the IUPAC code http://www.bioinformatics.org/sms/iupac.html
+		//instance.topStrandSeqBase = instance.topStrandSeqBase.replaceAll(replacePattern.pattern(), "");
 		
 		if(instance.pos == 0 || instance.chr.equals("0")) {
 			instance.missingPos = true;
@@ -240,7 +240,7 @@ public class IlluminaManifestMarker {
 		//convert to upper case
 		String refPlus = reference.query(instance.chr, instance.pos - 1000, instance.pos + 1000).toUpperCase();
 		
-		if( ReferenceFASTA.containsIgnoreN(refPlus, topSeqAllele1)) {
+		if( ReferenceFASTA.containsUseIUPAC(refPlus, topSeqAllele1)) {
 			
 			instance.topStrandIsPlus = true;
 			
@@ -271,7 +271,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = topSeqAllele1;
 			instance.altPlusSeq = topSeqAllele2;
 			
-		} else if(ReferenceFASTA.containsIgnoreN(refPlus, topSeqAllele2)) {
+		} else if(ReferenceFASTA.containsUseIUPAC(refPlus, topSeqAllele2)) {
 			
 			instance.topStrandIsPlus = true;
 			
@@ -301,7 +301,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = topSeqAllele2;
 			instance.altPlusSeq = topSeqAllele1;
 			
-		} else if(ReferenceFASTA.containsIgnoreN(refPlus, bottomSeqAllele1)) {
+		} else if(ReferenceFASTA.containsUseIUPAC(refPlus, bottomSeqAllele1)) {
 			String baseAfterChangeRC = reverseComplement(baseAfterChange);
 			
 			instance.topStrandIsPlus = false;
@@ -333,7 +333,7 @@ public class IlluminaManifestMarker {
 			instance.refPlusSeq = bottomSeqAllele1;
 			instance.altPlusSeq = bottomSeqAllele2;
 			
-		} else if(ReferenceFASTA.containsIgnoreN(refPlus, bottomSeqAllele2) ) {
+		} else if(ReferenceFASTA.containsUseIUPAC(refPlus, bottomSeqAllele2) ) {
 			String baseAfterChangeRC = reverseComplement(baseAfterChange);
 			
 			instance.topStrandIsPlus = false;
@@ -372,9 +372,9 @@ public class IlluminaManifestMarker {
 			String botSeqPart1 = reverseComplement(topSeqPart2);
 			
 			
-			if(ReferenceFASTA.containsIgnoreN(refPlus, topSeqPart1) && ReferenceFASTA.containsIgnoreN(refPlus, topSeqPart2) ) {
+			if(ReferenceFASTA.containsUseIUPAC(refPlus, topSeqPart1) && ReferenceFASTA.containsUseIUPAC(refPlus, topSeqPart2) ) {
 				
-			} else if(ReferenceFASTA.containsIgnoreN(refPlus, botSeqPart2) && ReferenceFASTA.containsIgnoreN(refPlus, botSeqPart1)) {
+			} else if(ReferenceFASTA.containsUseIUPAC(refPlus, botSeqPart2) && ReferenceFASTA.containsUseIUPAC(refPlus, botSeqPart1)) {
 				
 			} else {
 				instance.surroundingSequenceMatches = false;
