@@ -1,8 +1,10 @@
 package org.kidneyomics.illumina.array;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +16,9 @@ import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.vcf.VCFEncoder;
+import htsjdk.variant.vcf.VCFFormatHeaderLine;
 import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
@@ -54,11 +58,26 @@ public class IlluminaManifestMarker {
 	static final Pattern snpPattern = Pattern.compile("^\\[([^/]+)/([^\\]]+)\\]$");
 	static final Pattern seqPattern = Pattern.compile("^([ACTGNURYSWKMBDHVactgnuryswkmbdhv]+([ACTGNURYSWKMBDHVactgnuryswkmbdhv]))\\[([^/]+)/([^\\]]+)\\](([ACTGNURYSWKMBDHVactgnuryswkmbdhv])[ACTGNURYSWKMBDHVactgnuryswkmbdhv]+)$");
 	static final Pattern replacePattern = Pattern.compile("[^\\[\\]\\/ACTGNactgn-]");
-	private final static VCFHeader header;
-	private final static VCFEncoder encoder;
 	
-	static {
-		header = new VCFHeader();
+	private static final VCFEncoder encoder = encoder();
+	
+	public static VCFHeader header() {
+		return header(null);
+	}
+	
+	public static VCFHeader header(List<String> sampleIds) {
+		
+		
+		
+		VCFHeader header = null;
+		
+		if(sampleIds != null) {
+			Set<VCFHeaderLine> meta = new HashSet<VCFHeaderLine>();
+			header = new VCFHeader(meta , sampleIds);	
+		} else {
+			header = new VCFHeader();
+		}
+		
 		VCFInfoHeaderLine topStrand = new VCFInfoHeaderLine("TopStrand", 1, VCFHeaderLineType.String, "The top strand sequence from illumina manifest file");
 		header.addMetaDataLine(topStrand);
 		
@@ -96,15 +115,31 @@ public class IlluminaManifestMarker {
 		VCFInfoHeaderLine noReference = new VCFInfoHeaderLine("NoReferenceProbe", 1, VCFHeaderLineType.Flag, "The flag specifies that no allele matches the reference");
 		header.addMetaDataLine(noReference);
 		
-		encoder = new VCFEncoder(header, false, false);
-	}
-	
-	public static VCFHeader header() {
+		header.addMetaDataLine( new VCFFormatHeaderLine("GT",1,VCFHeaderLineType.String,"GT"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("GCScore",1,VCFHeaderLineType.Float,"GC Score"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("GTScore",1,VCFHeaderLineType.Float,"GT Score"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("R",1,VCFHeaderLineType.Float,"R"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("Theta",1,VCFHeaderLineType.Float,"Theta"));
+		
+		header.addMetaDataLine( new VCFFormatHeaderLine("X",1,VCFHeaderLineType.Float,"X"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("Y",1,VCFHeaderLineType.Float,"X"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("XRaw",1,VCFHeaderLineType.Float,"X Raw"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("YRaw",1,VCFHeaderLineType.Float,"Y Raw"));
+		
+		header.addMetaDataLine( new VCFFormatHeaderLine("BAlleleFreq",1,VCFHeaderLineType.Float,"B allele frequency"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("LogRRatio",1,VCFHeaderLineType.Float,"Log R Ratio"));
 		return header;
 	}
 	
 	
 	public static VCFEncoder encoder() {
+		VCFEncoder encoder = new VCFEncoder(header(), false, false);
+		return encoder;
+	}
+	
+	
+	public static VCFEncoder encoder(List<String> sampleIds) {
+		VCFEncoder encoder = new VCFEncoder(header(sampleIds), false, false);
 		return encoder;
 	}
 	
@@ -124,7 +159,7 @@ public class IlluminaManifestMarker {
 		
 	}
 	
-	enum STRAND {
+	public enum STRAND {
 		TOP,
 		BOT,
 		PLUS,
@@ -623,6 +658,8 @@ public class IlluminaManifestMarker {
 		}
 		
 		VariantContextBuilder builder = new VariantContextBuilder(null, this.chr, this.pos, this.pos + this.refAllele.length() - 1, alleles);
+		
+		
 		builder.attribute("TopStrand", this.getTopStrandSeqBase());
 		
 		if(this.topStrandIsPlus) {
