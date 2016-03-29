@@ -76,11 +76,30 @@ $vcfTools --command viewInfo --vcf $VCF --info EXAC_AC_Adj --info EXAC_AN_Adj -i
 ## Example make vcf from illumina manifest file
 
 ```
-export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
-export REF="/Users/cgillies/Google Drive/1_7_2016_Megachip/"
-export MANIFEST="/Users/cgillies/Google Drive/1_7_2016_Megachip/"
-export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/sites.vcf.gz"
-$vcfTools --command makeVcfFromManifest --outfile "$OUTFILE" --ref "$REF" --manifest "$MANIFEST"
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export REF="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.fa.gz"
+export MANIFEST="/Users/cgillies/Google Drive/1_7_2016_Megachip/MEGA_Consortium_15063755_B2.chr20.csv"
+export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.sites.vcf"
+$vcfTools --command makeVcfFromManifest --outfile "$OUT" --ref "$REF" --manifest "$MANIFEST"
+```
+
+## Example make vcf from Illumina standard report files
+
+```
+
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export REF="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/20.fa.gz"
+export MANIFEST="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/manifest.test.chr20.csv"
+export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/gt.vcf"
+export IN="/Users/cgillies/Google Drive/1_7_2016_Megachip/sampleList.txt"
+
+vi "$IN"
+HG00100	/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/HG00100.chr20.txt
+HG00138	/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/HG00138.chr20.txt
+HG00160	/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/HG00160.chr20.txt
+
+
+$vcfTools --command makeVcfFromReports --outfile "$OUT" --ref "$REF" --manifest "$MANIFEST" --infile "$IN"
 ```
 
 

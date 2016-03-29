@@ -63,6 +63,10 @@ public class SampleFile {
 		List<SampleFile> result = new ArrayList<SampleFile>(lines.size());
 		
 		for(String line : lines) {
+			if(line == null || line.isEmpty()) {
+				continue;
+			}
+			
 			String[] vals = line.split(delimiter);
 			if(vals.length < 2) {
 				throw new IllegalStateException("Error not enough columns on this line: " + line);

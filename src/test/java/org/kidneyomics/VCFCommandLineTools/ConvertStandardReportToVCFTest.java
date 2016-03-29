@@ -116,7 +116,7 @@ public class ConvertStandardReportToVCFTest {
 		
 		
 		
-		//outFileRef.delete();
+		outFileRef.delete();
 		inFile.delete();
 		
 	}

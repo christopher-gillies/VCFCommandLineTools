@@ -58,7 +58,8 @@ public class ApplicationOptions {
 		VIEW_GENOTYPES,
 		VIEW_INFO,
 		FIND_OVERLAPPING_SAMPLES_FROM_LIST,
-		MAKE_VCF_FROM_ILLUMINA
+		MAKE_VCF_FROM_ILLUMINA,
+		MAKE_VCF_FROM_ILLUMINA_REPORTS,
 	}
 
 	
@@ -131,6 +132,9 @@ public class ApplicationOptions {
 			break;
 		case "makeVcfFromManifest":
 			command = Command.MAKE_VCF_FROM_ILLUMINA;
+			break;
+		case "makeVcfFromReports":
+			command = Command.MAKE_VCF_FROM_ILLUMINA_REPORTS;
 			break;
 		default: 
 			command = Command.NONE;
@@ -262,7 +266,26 @@ public class ApplicationOptions {
 				throw new IllegalStateException("Please specify a reference sequence file");
 			}
 			
-			break;	
+			break;
+		case MAKE_VCF_FROM_ILLUMINA_REPORTS:
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
+			
+			if(StringUtils.isEmpty(this.getInFile())) {
+				throw new IllegalStateException("Please specify an input file");
+			}
+			
+			
+			if(StringUtils.isEmpty(this.getManifest())) {
+				throw new IllegalStateException("Please specify a manifest file");
+			}
+			
+			if(StringUtils.isEmpty(this.getReferenceSeq())) {
+				throw new IllegalStateException("Please specify a reference sequence file");
+			}
+			
+			break;
 		case HELP:
 			break;
 		default:
