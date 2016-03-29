@@ -34,7 +34,7 @@ public class ConvertStandardReportToVCFTest {
 		
 		ClassPathResource refSeq = new ClassPathResource("20.fa.gz");
 		
-		String outFile = tempDir.getAbsolutePath() + "/out.vcf";
+		String outFile = tempDir.getAbsolutePath() + "/out.vcf.gz";
 		
 		File outFileRef = new File(outFile);
 		if(outFileRef.exists()) {

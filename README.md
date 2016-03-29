@@ -90,7 +90,7 @@ $vcfTools --command makeVcfFromManifest --outfile "$OUT" --ref "$REF" --manifest
 export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
 export REF="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/20.fa.gz"
 export MANIFEST="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/manifest.test.chr20.csv"
-export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/gt.vcf"
+export OUT="/Users/cgillies/Google Drive/1_7_2016_Megachip/gt.vcf.gz"
 export IN="/Users/cgillies/Google Drive/1_7_2016_Megachip/sampleList.txt"
 
 vi "$IN"

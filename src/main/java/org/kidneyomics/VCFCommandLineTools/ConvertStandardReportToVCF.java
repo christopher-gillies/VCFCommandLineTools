@@ -2,6 +2,7 @@ package org.kidneyomics.VCFCommandLineTools;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.vcf.VCFConstants;
 import htsjdk.variant.vcf.VCFEncoder;
@@ -85,8 +87,14 @@ public class ConvertStandardReportToVCF implements RunCommand {
 
 			errorWriter = Files.newBufferedWriter(Paths.get(errorFile), Charset.defaultCharset(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING); 
 
-			writer = Files.newBufferedWriter(Paths.get(outfile), Charset.defaultCharset(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			
 
+			if(outfile.endsWith(".gz")) {
+				BlockCompressedOutputStream outstream = new BlockCompressedOutputStream(new File(outfile));
+				writer = new BufferedWriter( new OutputStreamWriter(outstream));
+			} else {
+				writer = Files.newBufferedWriter(Paths.get(outfile), Charset.defaultCharset(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			}
 			
 			/*
 			 * 
