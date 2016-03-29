@@ -46,7 +46,6 @@ public class IlluminaReportLineTest {
 		data.put("TopGenomicSeq", "GAGTCTTTGCATCAGTTATCTCAAGTCTGAGACCTGTGGTTGTCGAATCCCAGTGGACT[-/TTAGTAGTACT]CAGATCCTCCTTTGTTTGGTGCGTAGTATATTAACAAGTAAACCTGCCTGTATGCTCACC");
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
-		VariantContext vc = marker.toVariantContext();
 		
 		// 1
 		HashMap<String,String> gtInfo1 = new HashMap<>();
@@ -72,7 +71,7 @@ public class IlluminaReportLineTest {
 		
 		IlluminaReportLine rl1 = IlluminaReportLine.create(gtInfo1);
 		
-		Genotype gt1 = rl1.getGenotype(vc,marker);
+		Genotype gt1 = rl1.getGenotype(marker);
 		
 		assertTrue(gt1.isHet());
 		
@@ -100,7 +99,7 @@ public class IlluminaReportLineTest {
 		
 		IlluminaReportLine rl2 = IlluminaReportLine.create(gtInfo2);
 		
-		Genotype gt2 = rl2.getGenotype(vc,marker);
+		Genotype gt2 = rl2.getGenotype(marker);
 		
 		assertTrue(gt2.isHomRef());
 		
@@ -129,13 +128,15 @@ public class IlluminaReportLineTest {
 		
 		IlluminaReportLine rl3 = IlluminaReportLine.create(gtInfo3);
 		
-		Genotype gt3 = rl3.getGenotype(vc,marker);
+		Genotype gt3 = rl3.getGenotype(marker);
 		
 		assertTrue(gt3.isHomVar());
 		
 		//add genotypes to variant context
 		
-		VariantContext withGenotypes = new VariantContextBuilder(vc).genotypes(gt1,gt2,gt3).make();
+		//VariantContext withGenotypes = new VariantContextBuilder(vc).genotypes(gt1,gt2,gt3).make();
+		
+		VariantContext withGenotypes = marker.toVariantContext(gt1,gt2,gt3);
 		
 		assertTrue(withGenotypes.hasGenotypes());
 		

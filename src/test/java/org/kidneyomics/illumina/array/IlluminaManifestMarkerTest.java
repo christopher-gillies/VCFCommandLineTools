@@ -147,8 +147,8 @@ public class IlluminaManifestMarkerTest {
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
 		
-		assertEquals("A",marker.getRefAllele());
-		assertEquals("G",marker.getAltAllele());
+		assertEquals("A",marker.getRefAlleleString());
+		assertEquals("G",marker.getAltAlleleString());
 		
 		assertEquals("A",marker.getRefAlleleTop());
 		assertEquals("G",marker.getAltAlleleTop());
@@ -177,8 +177,8 @@ public class IlluminaManifestMarkerTest {
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
 		
-		assertEquals("G",marker.getRefAllele());
-		assertEquals("T",marker.getAltAllele());
+		assertEquals("G",marker.getRefAlleleString());
+		assertEquals("T",marker.getAltAlleleString());
 		
 		assertEquals("C",marker.getRefAlleleTop());
 		assertEquals("A",marker.getAltAlleleTop());
@@ -207,8 +207,8 @@ public class IlluminaManifestMarkerTest {
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
 		
-		assertEquals("T",marker.getRefAllele());
-		assertEquals("A",marker.getAltAllele());
+		assertEquals("T",marker.getRefAlleleString());
+		assertEquals("A",marker.getAltAlleleString());
 		
 		assertEquals("T",marker.getRefAlleleTop());
 		assertEquals("A",marker.getAltAlleleTop());
@@ -237,8 +237,8 @@ public class IlluminaManifestMarkerTest {
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
 		
-		assertEquals("T",marker.getRefAllele());
-		assertEquals("A",marker.getAltAllele());
+		assertEquals("T",marker.getRefAlleleString());
+		assertEquals("A",marker.getAltAlleleString());
 		
 		assertEquals("A",marker.getRefAlleleTop());
 		assertEquals("T",marker.getAltAlleleTop());
@@ -390,8 +390,8 @@ public class IlluminaManifestMarkerTest {
 		
 		assertTrue(marker.isIndel());
 		
-		assertEquals("A",marker.getRefAllele());
-		assertEquals("ACAGG",marker.getAltAllele());
+		assertEquals("A",marker.getRefAlleleString());
+		assertEquals("ACAGG",marker.getAltAlleleString());
 		
 		assertEquals("D",marker.getRefAlleleTop());
 		assertEquals("I",marker.getAltAlleleTop());
@@ -418,8 +418,8 @@ public class IlluminaManifestMarkerTest {
 		
 		assertTrue(marker.isIndel());
 		
-		assertEquals("GAGTACTACTAA",marker.getRefAllele());
-		assertEquals("G",marker.getAltAllele());
+		assertEquals("GAGTACTACTAA",marker.getRefAlleleString());
+		assertEquals("G",marker.getAltAlleleString());
 		
 		assertEquals("I",marker.getRefAlleleTop());
 		assertEquals("D",marker.getAltAlleleTop());
@@ -446,8 +446,8 @@ public class IlluminaManifestMarkerTest {
 		
 		assertTrue(marker.isIndel());
 		
-		assertEquals("GAGTACTACTAA",marker.getRefAllele());
-		assertEquals("G",marker.getAltAllele());
+		assertEquals("GAGTACTACTAA",marker.getRefAlleleString());
+		assertEquals("G",marker.getAltAlleleString());
 		
 		assertEquals("I",marker.getRefAlleleTop());
 		assertEquals("D",marker.getAltAlleleTop());

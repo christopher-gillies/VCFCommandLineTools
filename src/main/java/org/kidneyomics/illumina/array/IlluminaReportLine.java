@@ -16,7 +16,7 @@ public class IlluminaReportLine {
 	
 	}
 	
-	private String id;
+	private String sampleId;
 	private String snpName;
 	private IlluminaManifestMarker.STRAND illuminaStrand;
 	private String topAllele1;
@@ -50,7 +50,7 @@ public class IlluminaReportLine {
 		
 		
 		instance.snpName = vals.get("SNP Name");
-		instance.id = vals.get("Sample ID");
+		instance.sampleId = vals.get("Sample ID");
 		instance.topAllele1 = vals.get("Allele1 - Top");
 		instance.topAllele2 = vals.get("Allele2 - Top");
 		instance.gcScore = Float.parseFloat(vals.get("GC Score"));
@@ -95,8 +95,12 @@ public class IlluminaReportLine {
 		}
 	}
 	
-	public String getId() {
-		return id;
+	public void setSampleId(String id) {
+		this.sampleId = id;
+	}
+	
+	public String getSampleId() {
+		return sampleId;
 	}
 
 	public String getTopAllele1() {
@@ -158,10 +162,10 @@ public class IlluminaReportLine {
 	
 	@Override
 	public String toString() {
-		return this.getSnpName() + "\t" + this.getId() + "\t" + this.getTopAllele1() + "\t" + this.getTopAllele2();
+		return this.getSnpName() + "\t" + this.getSampleId() + "\t" + this.getTopAllele1() + "\t" + this.getTopAllele2();
 	}
 	
-	public Genotype getGenotype(VariantContext vc, IlluminaManifestMarker marker) {
+	public Genotype getGenotype(IlluminaManifestMarker marker) {
 		
 		if(!this.valid(marker)) {
 			throw new IllegalStateException("The marker does not match this report line " + marker.getIllmId());
@@ -171,9 +175,9 @@ public class IlluminaReportLine {
 		
 
 		if(this.topAllele1.equals(marker.getRefAlleleTop())) {
-			alleles.add(vc.getAllele(marker.getRefAllele()));
+			alleles.add(marker.refAllele());
 		} else if(this.topAllele1.equals(marker.getAltAlleleTop())) {
-			alleles.add(vc.getAllele(marker.getAltAllele()));
+			alleles.add(marker.altAllele());
 		} else if(this.topAllele1.equals("-") || this.topAllele1.equals(".")) {
 			alleles.add(Allele.NO_CALL);
 		} else {
@@ -181,9 +185,9 @@ public class IlluminaReportLine {
 		}
 		
 		if(this.topAllele2.equals(marker.getRefAlleleTop())) {
-			alleles.add(vc.getAllele(marker.getRefAllele()));
+			alleles.add(marker.refAllele());
 		} else if(this.topAllele2.equals(marker.getAltAlleleTop())) {
-			alleles.add(vc.getAllele(marker.getAltAllele()));
+			alleles.add(marker.altAllele());
 		} else if(this.topAllele2.equals("-") || this.topAllele2.equals(".")) {
 			alleles.add(Allele.NO_CALL);
 		} else {
@@ -191,7 +195,7 @@ public class IlluminaReportLine {
 		}
 		
 		
-		Genotype gt = GenotypeBuilder.create(this.getId(), alleles, attributes);
+		Genotype gt = GenotypeBuilder.create(this.getSampleId(), alleles, attributes);
 
 		return gt;
 	}

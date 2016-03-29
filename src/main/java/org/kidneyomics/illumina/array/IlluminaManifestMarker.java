@@ -13,6 +13,7 @@ import org.kidneyomics.referenceseq.ReferenceFASTA;
 import htsjdk.samtools.util.SequenceUtil;
 import htsjdk.tribble.annotation.Strand;
 import htsjdk.variant.variantcontext.Allele;
+import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.vcf.VCFEncoder;
@@ -32,9 +33,13 @@ public class IlluminaManifestMarker {
 	private String chr;
 	
 	
-	private String refAllele;
-	private String altAllele;
-	private String alt2Allele;
+	private String refAlleleString;
+	private String altAlleleString;
+	private String alt2AlleleString;
+	
+	private Allele refAllele;
+	private Allele altAllele;
+	private Allele alt2Allele;
 	
 	private String refPlusSeq;
 	private String altPlusSeq;
@@ -140,6 +145,11 @@ public class IlluminaManifestMarker {
 	
 	public static VCFEncoder encoder(List<String> sampleIds) {
 		VCFEncoder encoder = new VCFEncoder(header(sampleIds), false, false);
+		return encoder;
+	}
+	
+	public static VCFEncoder encoder(VCFHeader header) {
+		VCFEncoder encoder = new VCFEncoder(header, false, false);
 		return encoder;
 	}
 	
@@ -282,13 +292,13 @@ public class IlluminaManifestMarker {
 			instance.refAlleleTop = topAllele1;
 			instance.altAlleleTop = topAllele2;
 			
-			instance.refAllele = instance.refAlleleTop;
-			instance.altAllele = instance.altAlleleTop;
+			instance.refAlleleString = instance.refAlleleTop;
+			instance.altAlleleString = instance.altAlleleTop;
 			
 			if(isIndel) {
 				
-				instance.refAllele = baseBeforeChange + instance.refAllele;
-				instance.altAllele =  baseBeforeChange + instance.altAllele;
+				instance.refAlleleString = baseBeforeChange + instance.refAlleleString;
+				instance.altAlleleString =  baseBeforeChange + instance.altAlleleString;
 				
 				if(topAllele1.equals("")) {
 					instance.refAlleleTop = "D";
@@ -313,13 +323,13 @@ public class IlluminaManifestMarker {
 			instance.refAlleleTop = topAllele2;
 			instance.altAlleleTop = topAllele1;
 			
-			instance.refAllele = instance.refAlleleTop;
-			instance.altAllele = instance.altAlleleTop;
+			instance.refAlleleString = instance.refAlleleTop;
+			instance.altAlleleString = instance.altAlleleTop;
 			
 			if(isIndel) {
 				
-				instance.refAllele = baseBeforeChange + instance.refAllele;
-				instance.altAllele =  baseBeforeChange + instance.altAllele;
+				instance.refAlleleString = baseBeforeChange + instance.refAlleleString;
+				instance.altAlleleString =  baseBeforeChange + instance.altAlleleString;
 				
 				if(topAllele2.equals("")) {
 					instance.refAlleleTop = "D";
@@ -344,13 +354,13 @@ public class IlluminaManifestMarker {
 			instance.refAlleleTop = topAllele1;
 			instance.altAlleleTop = topAllele2;
 			
-			instance.refAllele = botAllele1;
-			instance.altAllele = botAllele2;
+			instance.refAlleleString = botAllele1;
+			instance.altAlleleString = botAllele2;
 			
 			if(isIndel) {
 				
-				instance.refAllele = baseAfterChangeRC + instance.refAllele;
-				instance.altAllele =  baseAfterChangeRC + instance.altAllele;
+				instance.refAlleleString = baseAfterChangeRC + instance.refAlleleString;
+				instance.altAlleleString =  baseAfterChangeRC + instance.altAlleleString;
 				
 				if(botAllele1.equals("")) {
 					instance.refAlleleTop = "D";
@@ -376,13 +386,13 @@ public class IlluminaManifestMarker {
 			instance.refAlleleTop = topAllele2;
 			instance.altAlleleTop = topAllele1;
 			
-			instance.refAllele = botAllele2;
-			instance.altAllele = botAllele1;
+			instance.refAlleleString = botAllele2;
+			instance.altAlleleString = botAllele1;
 			
 			if(isIndel) {
 				
-				instance.refAllele = baseAfterChangeRC + instance.refAllele;
-				instance.altAllele =  baseAfterChangeRC + instance.altAllele;
+				instance.refAlleleString = baseAfterChangeRC + instance.refAlleleString;
+				instance.altAlleleString =  baseAfterChangeRC + instance.altAlleleString;
 				
 				if(botAllele2.equals("")) {
 					instance.refAlleleTop = "D";
@@ -534,8 +544,20 @@ public class IlluminaManifestMarker {
 //			}
 		}
 		
-		
-
+		//set alleles
+		if(instance != null) {
+			if(instance.refAlleleString != null) {
+				instance.refAllele = Allele.create(instance.refAlleleString,true);
+			}
+			
+			if(instance.altAlleleString != null) {
+				instance.altAllele = Allele.create(instance.altAlleleString);
+			}
+			
+			if(instance.alt2AlleleString != null) {
+				instance.alt2Allele = Allele.create(instance.alt2AlleleString);
+			}
+		}
 		
 		// 1:100316615-CAG-C  ==> C is  1:100316614, A is 1:100316615 === Deletion is alternative allele
 		// 1:100336041-TAGAC-T ==> T is 1:100336040, A is 1:100336041 === Deletion is alternative allele
@@ -571,12 +593,12 @@ public class IlluminaManifestMarker {
 		return chr;
 	}
 
-	public String getRefAllele() {
-		return refAllele;
+	public String getRefAlleleString() {
+		return refAlleleString;
 	}
 
-	public String getAltAllele() {
-		return altAllele;
+	public String getAltAlleleString() {
+		return altAlleleString;
 	}
 
 	public String getRefPlusSeq() {
@@ -628,8 +650,8 @@ public class IlluminaManifestMarker {
 		this.alt2AlleleTop = alt2AlleleTop;
 	}
 
-	public String getAlt2Allele() {
-		return alt2Allele;
+	public String getAlt2AlleleString() {
+		return alt2AlleleString;
 	}
 
 
@@ -642,22 +664,44 @@ public class IlluminaManifestMarker {
 		return toVCFLine();
 	}
 	
-	public VariantContext toVariantContext() {
+	public VariantContext toVariantContext(Genotype... genotypes) {
+		List<Genotype> genotypesList = new LinkedList<Genotype>();
+		for(Genotype genotype : genotypes) {
+			genotypesList.add(genotype);
+		}
+		return toVariantContext(genotypesList);
+	}
+	
+	public Allele refAllele() {
+		return this.refAllele;
+	}
+	
+	public Allele altAllele() {
+		return this.altAllele;
+	}
+	
+	public Allele alt2Allele() {
+		return this.alt2Allele;
+	}
+	
+	public VariantContext toVariantContext(List<Genotype> genotypes) {
 		if(this.hasError()) {
 			return null;
 		}
+		
 		List<Allele> alleles = new LinkedList<Allele>();
-		Allele ref = Allele.create(this.refAllele, true);
-		alleles.add(ref);
-		Allele alt1 = Allele.create(this.altAllele);
-		alleles.add(alt1);
-		Allele alt2 = null;
+		alleles.add(this.refAllele());
+		alleles.add(this.altAllele());
 		if(!this.hasRefAllele) {
-			alt2 = Allele.create(this.alt2Allele);
-			alleles.add(alt2);
+			alleles.add(this.alt2Allele());
 		}
 		
-		VariantContextBuilder builder = new VariantContextBuilder(null, this.chr, this.pos, this.pos + this.refAllele.length() - 1, alleles);
+		
+		VariantContextBuilder builder = new VariantContextBuilder(null, this.chr, this.pos, this.pos + this.refAlleleString.length() - 1, alleles);
+		
+		if(genotypes != null && genotypes.size() > 0) {
+			builder.genotypes(genotypes);
+		}
 		
 		
 		builder.attribute("TopStrand", this.getTopStrandSeqBase());
