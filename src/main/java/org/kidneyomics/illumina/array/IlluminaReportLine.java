@@ -12,11 +12,12 @@ import htsjdk.variant.variantcontext.VariantContext;
 
 public class IlluminaReportLine {
 
-	private IlluminaReportLine(IlluminaManifestMarker marker) {
-		this.marker = marker;
+	private IlluminaReportLine() {
+	
 	}
 	
 	private String id;
+	private String snpName;
 	private IlluminaManifestMarker.STRAND illuminaStrand;
 	private String topAllele1;
 	private String topAllele2;
@@ -32,22 +33,23 @@ public class IlluminaReportLine {
 	private float yRaw;
 	private float bAlleleFreq;
 	private float logRRatio;
-	private final IlluminaManifestMarker marker;
 	private final Map<String,Object> attributes = new HashMap<>();
 	
-	private boolean valid() {
-		if(this.snpString.equals(marker.getSnpString()) && this.illuminaStrand.equals(marker.getIlmnStrand())) {
+	public boolean valid(IlluminaManifestMarker marker) {
+		if(this.snpString.equals(marker.getSnpString()) && this.illuminaStrand.equals(marker.getIlmnStrand())
+				&& this.snpName.equals(marker.getName())) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public static IlluminaReportLine create(IlluminaManifestMarker marker, Map<String,String> vals) {
+	public static IlluminaReportLine create(Map<String,String> vals) {
 		
-		IlluminaReportLine instance = new IlluminaReportLine(marker);
+		IlluminaReportLine instance = new IlluminaReportLine();
 		
 		
+		instance.snpName = vals.get("SNP Name");
 		instance.id = vals.get("Sample ID");
 		instance.topAllele1 = vals.get("Allele1 - Top");
 		instance.topAllele2 = vals.get("Allele2 - Top");
@@ -68,9 +70,6 @@ public class IlluminaReportLine {
 		
 		instance.illuminaStrand = IlluminaManifestMarker.STRAND.valueOf(vals.get("ILMN Strand"));
 		
-		if(!instance.valid()) {
-			throw new IllegalStateException("SNP String or Strand do not match for " + marker.getIllmId());
-		}
 		
 		instance.attributes.put("GCScore", instance.gcScore);
 		instance.attributes.put("GTScore", instance.gtScore);
@@ -87,6 +86,15 @@ public class IlluminaReportLine {
 		
 	}
 
+	
+	public boolean noCall() {
+		if(this.getTopAllele1().equals("-") || this.getTopAllele1().equals(".") || this.getTopAllele2().equals("-") || this.getTopAllele2().equals(".")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -143,7 +151,21 @@ public class IlluminaReportLine {
 		return snpString;
 	}
 	
-	public Genotype getGenotype(VariantContext vc) {
+	public String getSnpName() {
+		return snpName;
+	}
+
+	
+	@Override
+	public String toString() {
+		return this.getSnpName() + "\t" + this.getId() + "\t" + this.getTopAllele1() + "\t" + this.getTopAllele2();
+	}
+	
+	public Genotype getGenotype(VariantContext vc, IlluminaManifestMarker marker) {
+		
+		if(!this.valid(marker)) {
+			throw new IllegalStateException("The marker does not match this report line " + marker.getIllmId());
+		}
 		
 		List<Allele> alleles = new ArrayList<>(2);
 		

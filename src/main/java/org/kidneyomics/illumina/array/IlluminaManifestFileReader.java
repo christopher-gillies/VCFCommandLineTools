@@ -21,11 +21,11 @@ public class IlluminaManifestFileReader implements AutoCloseable, Iterable<Illum
 	 * [Controls]
 	 */
 	
-	private BufferedReader reader = null;
-	private ReferenceFASTA reference = null;
-	private String[] header = null;
+	private final BufferedReader reader;
+	private final ReferenceFASTA reference;
+	private final String[] header;
 	private String nextLine = null;
-	private String delimiter = ",";
+	private final String delimiter = ",";
 	
 	private IlluminaManifestFileReader(File manifest, ReferenceFASTA reference) {
 		
@@ -82,7 +82,7 @@ public class IlluminaManifestFileReader implements AutoCloseable, Iterable<Illum
 			Map<String,String> valsMap = new HashMap<>();
 			
 			if(vals.length != header.length) {
-				throw new IllegalStateException("Line does not have enough columns " + nextLine);
+				throw new IllegalStateException("Line does not have enough columns " + nextLine + "\n" + header);
 			}
 			
 			for(int i = 0; i < header.length; i++) {
