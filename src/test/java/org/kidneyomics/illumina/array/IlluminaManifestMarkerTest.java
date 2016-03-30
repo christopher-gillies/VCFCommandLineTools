@@ -541,6 +541,32 @@ public class IlluminaManifestMarkerTest {
 	
 	
 	@Test
+	public void testThatSequenceParsedCorrectlyIndel5() throws IOException {
+
+
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "6:33219715-A-AA-0_P_F_2302301390");
+		data.put("Name", "6:33219715-A-AA");
+		data.put("IlmnStrand", "PLUS");
+		data.put("SNP", "[I/D]");
+		data.put("Chr", "6");
+		data.put("MapInfo", "33219715");
+		data.put("TopGenomicSeq", "GCCTGTCCACGCTCAATCAAAGCCTCAGCCTCCTTCACAAATGCCACTAAACCCCCAAAA[-/A]GGGGGAGACAGCAACTCTTCAATGAATTCCTGGAAAGACACAAACACATATACACAGGT");
+		
+		ClassPathResource resource = new ClassPathResource("chr6.fa.gz");
+		
+		ReferenceFASTA chr6 = ReferenceFASTA.create(resource.getFile());
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, chr6);
+		
+		assertTrue(marker.isIndel());
+		
+		assertTrue(marker.hasError());
+	}
+	
+	
+	@Test
 	public void testWriteVCF() {
 		
 		VCFEncoder encoder = IlluminaManifestMarker.encoder();

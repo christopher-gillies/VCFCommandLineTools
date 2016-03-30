@@ -78,6 +78,7 @@ public class ConvertStandardReportToVCF implements RunCommand {
 		int missingPos = 0;
 		int noReferenceAllele = 0;
 		int noSurroundingSequenceMatches = 0;
+		int notMatchesRef = 0;
 		int total = 0;
 		IlluminaManifestFileReader manifestReader = null;
 		BufferedWriter writer = null;
@@ -198,7 +199,7 @@ public class ConvertStandardReportToVCF implements RunCommand {
 					}
 
 					if (!marker.hasReferenceAllele()) {
-						errorWriter.write("DOES_NOT_MATCH_REFERENCE,");
+						errorWriter.write("NO_ALLLE_MATCHES_REFERENCE_SEQUENCE,");
 						noReferenceAllele++;
 					}
 
@@ -206,6 +207,12 @@ public class ConvertStandardReportToVCF implements RunCommand {
 						errorWriter.write("SURROUNDING_SEQUENCE_DOES_NOT_MATCH_REFERENCE");
 						noSurroundingSequenceMatches++;
 					}
+					
+					if(!marker.matchesReference()) {
+						errorWriter.write("DOES_NOT_MATCH_REFERENCE_SEQUENCE_AT_POSITION");
+						notMatchesRef++;
+					}
+					
 					errorWriter.write("\n");
 					continue;
 				} else {
@@ -260,7 +267,8 @@ public class ConvertStandardReportToVCF implements RunCommand {
 		logger.info("Total sites in manifest file: " + total);
 		logger.info("Total error sites: " + errorCount);
 		logger.info("Total no position sites: " + missingPos);
-		logger.info("Total no reference sites: " + noReferenceAllele);
+		logger.info("Total no reference allele sites: " + noReferenceAllele);
+		logger.info("Total non-reference seq match at marker postion: " + notMatchesRef);
 		logger.info(
 				"Total no reference sites were surrounding sequence does not match: " + noSurroundingSequenceMatches);
 		logger.info("Percent skipped:  " + formater.format(errorCount / (double) total));

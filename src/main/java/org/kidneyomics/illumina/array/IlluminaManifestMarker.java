@@ -58,6 +58,7 @@ public class IlluminaManifestMarker {
 	private boolean topStrandIsPlus;
 	private boolean indel;
 	private boolean hasRefAllele = true;
+	private boolean matchesReference = true; 
 	private String snpAllele1;
 	private String snpAllele2;
 	
@@ -158,7 +159,7 @@ public class IlluminaManifestMarker {
 	}
 	
 	public boolean hasError() {
-		return missingPos || !hasRefAllele;
+		return missingPos || !hasRefAllele || !matchesReference;
 	}
 	
 	public boolean missingPos() {
@@ -573,7 +574,8 @@ public class IlluminaManifestMarker {
 			String seqToCompare = reference.query(instance.chr, instance.pos, instance.pos + instance.refAlleleString.length() - 1);
 			
 			if(!seqToCompare.toUpperCase().equals(instance.refAlleleString)) {
-				throw new IllegalStateException("Error reference allele does not match at: " + instance.illmId +" " + instance.chr + ":" + instance.pos + " " + instance.refAlleleString + " " + seqToCompare);
+				instance.matchesReference = false;
+				//throw new IllegalStateException("Error reference allele does not match at: " + instance.illmId +" " + instance.chr + ":" + instance.pos + " " + instance.refAlleleString + " " + seqToCompare);
 			}
 		}
 		
@@ -584,6 +586,10 @@ public class IlluminaManifestMarker {
 	
 	static String reverseComplement(String in) {
 		return SequenceUtil.reverseComplement(in);
+	}
+	
+	public boolean matchesReference() {
+		return this.matchesReference;
 	}
 
 	public String getIllmId() {
