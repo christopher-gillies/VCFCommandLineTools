@@ -155,6 +155,7 @@ public class IlluminaManifestMarkerTest {
 		
 		assertEquals("TGTCAACAATTCTACCTATGAAGGAAAGCCAATATTCCTTAGAGCTTGTGAAGATGCACATGATGTTAAAGATGTGTGCCTGACATTTTTGGAAAAAGGAGCCAATCCTAATGCAATCA",marker.getRefPlusSeq());
 		assertEquals("TGTCAACAATTCTACCTATGAAGGAAAGCCAATATTCCTTAGAGCTTGTGAAGATGCACGTGATGTTAAAGATGTGTGCCTGACATTTTTGGAAAAAGGAGCCAATCCTAATGCAATCA",marker.getAltPlusSeq());
+		
 	}
 	
 	@Test
@@ -507,6 +508,9 @@ public class IlluminaManifestMarkerTest {
 		data.put("TopGenomicSeq", "GAGTCTTTGCATCAGTTATCTCAAGTCTGAGACCTGTGGTTGTCGAATCCCAGTGGACT[-/TTAGTAGTACT]CAGATCCTCCTTTGTTTGGTGCGTAGTATATTAACAAGTAAACCTGCCTGTATGCTCACC");
 		
 		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, fasta);
+		
+		//validate that the id is set correctly
+		assertEquals("20:10393722-GAGTACTACTAA-G", marker.toVariantContext().getID());
 		
 		System.err.println(marker.toVCFLine());
 	}

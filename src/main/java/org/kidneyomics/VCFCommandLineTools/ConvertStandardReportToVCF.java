@@ -159,10 +159,20 @@ public class ConvertStandardReportToVCF implements RunCommand {
 				/*
 				 * Read marker from each file 
 				 */
+				float gtScore = 0.0f;
 				HashMap<SampleFile,IlluminaReportLine> reportLines = new HashMap<>(2 * sampleIds.size());
 				for(Map.Entry<SampleFile, IlluminaReportFileReader> entry : reportReaders.entrySet()) {
 					if(entry.getValue().hasNext()) {
 						IlluminaReportLine reportLine = entry.getValue().next();
+						
+						//gtScore should be the same for all variants unless no call
+						//what if multiple batches are included into this script?
+						//
+						if(gtScore != 0.0f && gtScore != reportLine.getGtScore() && reportLine.getGtScore() != 0.0f) {
+							throw new IllegalStateException("GTScore is not the same for all subjects for " + marker.getName() + " " + gtScore + " " + reportLine.getGtScore() + " " + reportLine.getSampleId());
+						}
+						gtScore = reportLine.getGtScore();
+						
 						//make sampleid match the id from the id file
 						reportLine.setSampleId(entry.getKey().getId());
 						
@@ -171,6 +181,9 @@ public class ConvertStandardReportToVCF implements RunCommand {
 						throw new IllegalStateException(entry.getKey().getId() + " is missing marker " + marker.getName());
 					}
 				}
+				
+				//set gcScore
+				marker.setGTScore(gtScore);
 				
 				if (total % 10000 == 0) {
 					logger.info(total + " markers processed. Last marker: " + marker.getName());

@@ -49,6 +49,8 @@ public class IlluminaManifestMarker {
 	private String altAlleleTop;
 	private String alt2AlleleTop;
 	
+	private float gtScore = -1.0f;
+	
 	private int pos;
 	
 	private boolean surroundingSequenceMatches = true;
@@ -87,7 +89,7 @@ public class IlluminaManifestMarker {
 		header.addMetaDataLine(topStrand);
 		
 		
-		VCFInfoHeaderLine topStrandPlus = new VCFInfoHeaderLine("TopStrandIsPlus", 1, VCFHeaderLineType.Character, "T or F depending on whether or not the top strand is on the plus or minus strand");
+		VCFInfoHeaderLine topStrandPlus = new VCFInfoHeaderLine("TopStrandIsPlus", 1, VCFHeaderLineType.Flag, "This flag is set depending on whether or not the top strand is on the plus or minus strand");
 		header.addMetaDataLine(topStrandPlus);
 		
 		VCFInfoHeaderLine refPlus = new VCFInfoHeaderLine("RefSeqPlus", 1, VCFHeaderLineType.String, "The reference or inferred reference probe sequence in terms of the plus strand");
@@ -120,9 +122,11 @@ public class IlluminaManifestMarker {
 		VCFInfoHeaderLine noReference = new VCFInfoHeaderLine("NoReferenceProbe", 1, VCFHeaderLineType.Flag, "The flag specifies that no allele matches the reference");
 		header.addMetaDataLine(noReference);
 		
+		header.addMetaDataLine(new VCFInfoHeaderLine("GenTrainScore", 1, VCFHeaderLineType.Float, "This is the GTScore from the standard report files. This value is a score between 0 and 1 that indicates how well this snp clustered. Scores closer to one indicate a higher quality cluster"));
+		
 		header.addMetaDataLine( new VCFFormatHeaderLine("GT",1,VCFHeaderLineType.String,"GT"));
-		header.addMetaDataLine( new VCFFormatHeaderLine("GCScore",1,VCFHeaderLineType.Float,"GC Score"));
-		header.addMetaDataLine( new VCFFormatHeaderLine("GTScore",1,VCFHeaderLineType.Float,"GT Score"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("GCScore",1,VCFHeaderLineType.Float,"GC Score GenCall Score"));
+		header.addMetaDataLine( new VCFFormatHeaderLine("GTScore",1,VCFHeaderLineType.Float,"GT Score GenTrain Score"));
 		header.addMetaDataLine( new VCFFormatHeaderLine("R",1,VCFHeaderLineType.Float,"R"));
 		header.addMetaDataLine( new VCFFormatHeaderLine("Theta",1,VCFHeaderLineType.Float,"Theta"));
 		
@@ -306,10 +310,10 @@ public class IlluminaManifestMarker {
 				} else {
 					instance.refAlleleTop = "I";
 					instance.altAlleleTop = "D";
+					//adjust position
+					instance.pos = instance.pos - 1;
 				}
 				
-				//adjust position
-				instance.pos = instance.pos - 1;
 			}
 			
 			
@@ -337,10 +341,11 @@ public class IlluminaManifestMarker {
 				} else {
 					instance.refAlleleTop = "I";
 					instance.altAlleleTop = "D";
+					//adjust position
+					instance.pos = instance.pos - 1;
 				}
 				
-				//adjust position
-				instance.pos = instance.pos - 1;
+
 			}
 			
 			instance.refPlusSeq = topSeqAllele2;
@@ -368,10 +373,10 @@ public class IlluminaManifestMarker {
 				} else {
 					instance.refAlleleTop = "I";
 					instance.altAlleleTop = "D";
+					//adjust position
+					instance.pos = instance.pos - 1;
 				}
 				
-				//adjust position
-				instance.pos = instance.pos - 1;
 			}
 			
 			
@@ -400,10 +405,11 @@ public class IlluminaManifestMarker {
 				} else {
 					instance.refAlleleTop = "I";
 					instance.altAlleleTop = "D";
+					
+					//adjust position
+					instance.pos = instance.pos - 1;
 				}
 				
-				//adjust position
-				instance.pos = instance.pos - 1;
 				
 			}
 			
@@ -559,6 +565,15 @@ public class IlluminaManifestMarker {
 			}
 		}
 		
+		//validate reference allele position
+		if(!instance.hasError()) {
+			String seqToCompare = reference.query(instance.chr, instance.pos, instance.pos + instance.refAlleleString.length() - 1);
+			
+			if(!seqToCompare.toUpperCase().equals(instance.refAlleleString)) {
+				throw new IllegalStateException("Error reference allele does not match at: " + instance.illmId +" " + instance.chr + ":" + instance.pos + " " + instance.refAlleleString + " " + seqToCompare);
+			}
+		}
+		
 		// 1:100316615-CAG-C  ==> C is  1:100316614, A is 1:100316615 === Deletion is alternative allele
 		// 1:100336041-TAGAC-T ==> T is 1:100336040, A is 1:100336041 === Deletion is alternative allele
 		return instance;
@@ -684,6 +699,14 @@ public class IlluminaManifestMarker {
 		return this.alt2Allele;
 	}
 	
+	public float getGTScore() {
+		return this.gtScore;
+	}
+	
+	public void setGTScore(float gtScore) {
+		this.gtScore = gtScore;
+	}
+	
 	public VariantContext toVariantContext(List<Genotype> genotypes) {
 		if(this.hasError()) {
 			return null;
@@ -703,13 +726,14 @@ public class IlluminaManifestMarker {
 			builder.genotypes(genotypes);
 		}
 		
+		//adds id column
+		builder.id(this.getName());
+		
 		
 		builder.attribute("TopStrand", this.getTopStrandSeqBase());
 		
 		if(this.topStrandIsPlus) {
-			builder.attribute("TopStrandIsPlus", 'T');
-		} else {
-			builder.attribute("TopStrandIsPlus", 'F');
+			builder.attribute("TopStrandIsPlus", true);
 		}
 		
 		builder.attribute("RefSeqPlus", this.refPlusSeq);
@@ -728,6 +752,9 @@ public class IlluminaManifestMarker {
 		builder.attribute("SNP", this.snpString);
 		builder.attribute("IlluminaStrand", this.ilmnStrand);
 		builder.attribute("IlluminaId", this.illmId);
+		
+		//set gc score
+		builder.attribute("GenTrainScore", this.gtScore);
 		
 		if(!hasRefAllele) {
 			builder.attribute("NoReferenceProbe", true);
