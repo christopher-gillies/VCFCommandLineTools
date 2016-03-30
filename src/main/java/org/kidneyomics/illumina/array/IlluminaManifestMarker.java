@@ -289,6 +289,9 @@ public class IlluminaManifestMarker {
 		//convert to upper case
 		String refPlus = reference.query(instance.chr, instance.pos - 1000, instance.pos + 1000).toUpperCase();
 		
+		//we need to trim trailing N from sequence
+		refPlus = replaceTrailingN(refPlus);
+		
 		if( ReferenceFASTA.containsUseIUPAC(refPlus, topSeqAllele1)) {
 			
 			instance.topStrandIsPlus = true;
@@ -765,6 +768,10 @@ public class IlluminaManifestMarker {
 
 		
 		return vc;
+	}
+	
+	public static String replaceTrailingN(String in) {
+		return in.replaceFirst("^N+", "").replaceFirst("N+$", "");
 	}
 	
 	public String toVCFLine() {

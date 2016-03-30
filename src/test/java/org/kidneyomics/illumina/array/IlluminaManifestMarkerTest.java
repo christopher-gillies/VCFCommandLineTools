@@ -371,6 +371,30 @@ public class IlluminaManifestMarkerTest {
 	
 	
 	@Test
+	public void testThatSequenceParsedCorrectly9() throws IOException {
+
+		ClassPathResource resource = new ClassPathResource("chr11.fa.gz");
+		
+		ReferenceFASTA chr11 = ReferenceFASTA.create(resource.getFile());
+		
+		HashMap<String,String> data = new HashMap<>();
+		
+		data.put("IlmnID", "11:1161982-GA-0_B_R_2299273705");
+		data.put("Name", "11:1161982-GA");
+		data.put("IlmnStrand", "BOT");
+		data.put("SNP", "[T/C]");
+		data.put("Chr", "11");
+		data.put("MapInfo", "1161982");
+		data.put("TopGenomicSeq", "CCTGGGGTCCCGCCCCACAGCCCCCAGCAAAACCCTTGTCCTTTGTGTCCCCAGCCAAC[A/G]TCACCATCTTCAGACCCTCAACCTTCTTCATCATCGCCCAGACCAGCCTGGGCCTGCAG");
+		
+		IlluminaManifestMarker marker = IlluminaManifestMarker.create(data, chr11);
+		
+		assertTrue(marker.surroundingSequenceMatches());
+		
+	}
+	
+	
+	@Test
 	public void testThatSequenceParsedCorrectlyIndel1() {
 
 		//case 1
@@ -536,6 +560,16 @@ public class IlluminaManifestMarkerTest {
 		
 		String encoding = encoder.encode(marker.toVariantContext());
 		System.err.println(encoding);
+		
+		
+	}
+	
+	
+	@Test
+	public void testTrimTrailingN() {
+		assertEquals("AAAAAANAAAAA",IlluminaManifestMarker.replaceTrailingN("NNNNNAAAAAANAAAAANNNNN"));
+		
+		assertEquals("AAAAAANNNAAAAA",IlluminaManifestMarker.replaceTrailingN("NNNNNAAAAAANNNAAAAANNNNN"));
 		
 		
 	}

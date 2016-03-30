@@ -166,8 +166,6 @@ public class ConvertStandardReportToVCF implements RunCommand {
 						IlluminaReportLine reportLine = entry.getValue().next();
 						
 						//gtScore should be the same for all variants unless no call
-						//what if multiple batches are included into this script?
-						//
 						if(gtScore != 0.0f && gtScore != reportLine.getGtScore() && reportLine.getGtScore() != 0.0f) {
 							throw new IllegalStateException("GTScore is not the same for all subjects for " + marker.getName() + " " + gtScore + " " + reportLine.getGtScore() + " " + reportLine.getSampleId());
 						}
