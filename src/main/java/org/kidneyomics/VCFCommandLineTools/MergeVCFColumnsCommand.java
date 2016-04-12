@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import htsjdk.samtools.util.BlockCompressedOutputStream;
 import htsjdk.variant.variantcontext.Genotype;
@@ -29,6 +30,7 @@ import htsjdk.variant.vcf.VCFHeader;
 import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 
+@Component
 public class MergeVCFColumnsCommand implements RunCommand {
 
 	

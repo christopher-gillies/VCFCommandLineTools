@@ -103,6 +103,17 @@ $vcfTools --command makeVcfFromReports --outfile "$OUT" --ref "$REF" --manifest 
 ```
 
 
+## Example merge biallelic vcf sites
+
+```
+export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/home/cgillies/programs/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.relabel.vcf.gz"
+export VCF2="/home/cgillies/programs/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+
+$vcfTools --command mergeVcfColumns --outfile "$OUT" --vcf "$VCF1" --vcf "$VCF2"
+```
+
 ## Help
 ```
 $vcfTools --help

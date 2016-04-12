@@ -52,6 +52,9 @@ public class VcfCommandLineToolsApplication {
 	    	case MAKE_VCF_FROM_ILLUMINA_REPORTS:
 	    		runCommand = context.getBean(ConvertStandardReportToVCF.class);
 	    		break;
+	    	case MERGE_VCF_COLUMNS:
+	    		runCommand = context.getBean(MergeVCFColumnsCommand.class);
+	    		break;
 	    	default:
 	    			
 	    	}
