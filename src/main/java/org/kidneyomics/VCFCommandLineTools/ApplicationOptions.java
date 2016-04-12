@@ -60,6 +60,7 @@ public class ApplicationOptions {
 		FIND_OVERLAPPING_SAMPLES_FROM_LIST,
 		MAKE_VCF_FROM_ILLUMINA,
 		MAKE_VCF_FROM_ILLUMINA_REPORTS,
+		MERGE_VCF_COLUMNS
 	}
 
 	
@@ -135,6 +136,9 @@ public class ApplicationOptions {
 			break;
 		case "makeVcfFromReports":
 			command = Command.MAKE_VCF_FROM_ILLUMINA_REPORTS;
+			break;
+		case "mergeVcfColumns":
+			command = Command.MERGE_VCF_COLUMNS;
 			break;
 		default: 
 			command = Command.NONE;
@@ -284,6 +288,19 @@ public class ApplicationOptions {
 			if(StringUtils.isEmpty(this.getReferenceSeq())) {
 				throw new IllegalStateException("Please specify a reference sequence file");
 			}
+			
+			break;
+			
+		case MERGE_VCF_COLUMNS:
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
+			
+			
+			if(vcfs.size() != 2) {
+				throw new IllegalStateException("Please specify two vcf files");
+			}
+			
 			
 			break;
 		case HELP:
