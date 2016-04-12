@@ -163,13 +163,11 @@ public class MergeVCFColumnsCommand implements RunCommand {
 						variant2 = iter2.next();
 					}
 					
-					count++;
+					
 					countFile1++;
 					countFile2++;
 					
-					if(count % 10000 == 0) {
-						logger.info(count + " mergeable variants found");
-					}
+
 					
 
 					//check that variants are ordered correctly
@@ -185,9 +183,9 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					
 					if(cmp < 0) {
 					//	logger.info("Skipping: " + variant1.getContig() + ":" + variant1.getStart() + "\t" + variant1.getReference().toString() +  "\t" + variant1.getAlternateAlleles());
-						usePrevious1 = true;
-					} else if(cmp > 0) {
 						usePrevious2 = true;
+					} else if(cmp > 0) {
+						usePrevious1 = true;
 					//	logger.info("Skipping: " + variant2.getContig() + ":" + variant2.getStart() + "\t" + variant2.getReference().toString() +  "\t" + variant2.getAlternateAlleles());
 					} else {
 						// they equal position
@@ -200,6 +198,12 @@ public class MergeVCFColumnsCommand implements RunCommand {
 							
 							//TODO: Finish merging
 							//both variants are bialleleic and the reference and alternative alleles match
+							
+							count++;
+							if(count % 10000 == 0) {
+								logger.info(count + " mergeable variants found");
+							}
+							
 							
 							VariantContext merged = VariantContextMerger.merge(variant1, variant2);
 							
