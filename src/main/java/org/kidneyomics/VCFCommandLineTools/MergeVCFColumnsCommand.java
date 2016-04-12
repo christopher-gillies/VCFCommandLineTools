@@ -151,25 +151,27 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					
 					VariantContext variant2 = null;
 					
+//					if(usePrevious1 == true && usePrevious2 == true && comparator.compare(previous1,previous2) != 0) {
+//						//then skip both
+//						usePrevious1 = false;
+//						usePrevious2 = false;
+//					}
+					
 					if(usePrevious1) {
 						variant1 = previous1;
 					} else {
 						variant1 = iter1.next();
+						countFile1++;
 					}
 					
 					if(usePrevious2) {
 						variant2 = previous2;
 					} else {
 						variant2 = iter2.next();
+						countFile2++;
 					}
 					
 					
-					countFile1++;
-					countFile2++;
-					
-
-					
-
 					//check that variants are ordered correctly
 					if(previous1 != null && previous1 != variant1 && comparator.compare(previous1, variant1) > 0) {
 						throw new IllegalStateException(previous1.getContig() + ":" + previous1.getStart() + " > " + variant1.getContig() + ":" + variant1.getStart());
@@ -182,11 +184,25 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					int cmp = comparator.compare(variant1, variant2);
 					
 					if(cmp < 0) {
-					//	logger.info("Skipping: " + variant1.getContig() + ":" + variant1.getStart() + "\t" + variant1.getReference().toString() +  "\t" + variant1.getAlternateAlleles());
+						//logger.info("Skipping VCF1: " + variant1.getContig() + ":" + variant1.getStart() + "\t" + variant1.getReference().toString() +  "\t" + variant1.getAlternateAlleles());
+						
+						if(usePrevious1 == true && usePrevious2 == true) {
+							//variant1 < variant2
+							//we need to go to next variant in vcf1
+							usePrevious1 = false;
+						}
+						
 						usePrevious2 = true;
 					} else if(cmp > 0) {
+						
+						if(usePrevious1 == true && usePrevious2 == true) {
+							//variant1 > variant2
+							//we need to go to next variant in vcf2
+							usePrevious2 = false;
+						}
+						
 						usePrevious1 = true;
-					//	logger.info("Skipping: " + variant2.getContig() + ":" + variant2.getStart() + "\t" + variant2.getReference().toString() +  "\t" + variant2.getAlternateAlleles());
+						//logger.info("Skipping VCF2: " + variant2.getContig() + ":" + variant2.getStart() + "\t" + variant2.getReference().toString() +  "\t" + variant2.getAlternateAlleles());
 					} else {
 						// they equal position
 						usePrevious1 = false;
@@ -264,6 +280,7 @@ public class MergeVCFColumnsCommand implements RunCommand {
 		} finally {
 			if(writer != null) {
 				try {
+					logger.info("Flushing writer");
 					writer.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
