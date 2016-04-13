@@ -242,7 +242,7 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					VariantContext current = iter1.next();
 					countFile1++;
 					
-					if(previous1 != null && comparator.compare(previous1, current) > 0) {
+					if(previous1 != null && current != null && comparator.compare(previous1, current) > 0) {
 						throw new IllegalStateException(previous1.getContig() + ":" + previous1.getStart() + " > " + current.getContig() + ":" + current.getStart());
 					}
 					
@@ -255,7 +255,7 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					VariantContext current = iter1.next();
 					countFile2++;
 					
-					if(previous2 != null && comparator.compare(previous2, current) > 0) {
+					if(previous2 != null && current != null && comparator.compare(previous2, current) > 0) {
 						throw new IllegalStateException(previous2.getContig() + ":" + previous2.getStart() + " > " + current.getContig() + ":" + current.getStart());
 					}
 					
