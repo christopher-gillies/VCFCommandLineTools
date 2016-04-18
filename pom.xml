@@ -44,6 +44,14 @@
 			<version>2.4</version>
 		</dependency>
 
+		<!-- Math -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+		
+		
 		<!-- String template -->
 		<dependency>
 			<groupId>org.antlr</groupId>
