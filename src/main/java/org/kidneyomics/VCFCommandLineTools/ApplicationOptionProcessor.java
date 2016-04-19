@@ -65,6 +65,18 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		options.addOption(siteOption);
 		
+		Option excludeChrOption = Option.builder()
+		.argName("excludeChr")
+		.longOpt("excludeChr")
+		.desc("please specify a chr to exclude")
+		.numberOfArgs(100)
+		.hasArg(true)
+		.valueSeparator(' ')
+		.required(false)
+		.build();
+		
+		options.addOption(excludeChrOption);
+		
 		Option refOption = Option.builder()
 		.argName("ref")
 		.longOpt("ref")
@@ -228,6 +240,13 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			String[] sites = cmd.getOptionValues("site");
 			for(String site : sites) {
 				applicationOptions.addSite(site);
+			}
+		}
+		
+		if(cmd.hasOption("excludeChr")) {
+			String[] excludeChrs = cmd.getOptionValues("excludeChr");
+			for(String excludeChr : excludeChrs) {
+				applicationOptions.addChrToExclude(excludeChr);
 			}
 		}
 		

@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 
@@ -57,8 +58,8 @@ public class FilterCommand implements RunCommand {
 		int windowSizeKb = applicationOptions.getWindowSizeKb();
 		int windowSizeBp = windowSizeKb * 1000;
 		int minAc = applicationOptions.getMinAc();
+		List<String> chrsToExclude = applicationOptions.getChrsToExclude();
 		
-
 		logger.info("Options in effect");
 		logger.info("vcf: " + vcf.getAbsolutePath());
 		logger.info("maxLd: " + maxLd);
@@ -70,6 +71,12 @@ public class FilterCommand implements RunCommand {
 			filters.add(new MinACVariantContextFilter(minAc));
 		}
 		
+		if(chrsToExclude.size() > 0) {
+			for(String chr : chrsToExclude) {
+				logger.info("Excluding chr: " + chr);
+				filters.add(new ExcludeChrVariantContextFilter(chr));
+			}
+		}
 		
 		VCFFileReader reader = new VCFFileReader(vcf, false);
 		Iterator<VariantContext> iter = reader.iterator();

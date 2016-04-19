@@ -10,6 +10,7 @@ import java.util.Queue;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
+import htsjdk.variant.vcf.VCFFileReader;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -159,6 +160,45 @@ public class FilterCommandTest {
 		
 		assertTrue(out.exists());
 		out.delete();
+		
+	}
+	
+	@Test
+	public void testFilterExcludeChr() throws IOException {
+		
+		LoggerService logger = new LoggerService();
+		ApplicationOptions options = new ApplicationOptions(logger);
+		
+		ClassPathResource vcf1 = new ClassPathResource("ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz");
+				
+		options.addVcfFile(vcf1.getFile().getAbsolutePath());
+		
+		options.setMinAc(10);
+		File tmpDir = FileUtils.getTempDirectory();
+		File out = new File(tmpDir.getAbsolutePath() + "/" + "result.vcf.gz");
+		options.setOutFile(out.getAbsolutePath());
+		
+		options.setMaxLd(1);
+		options.setWindowSizeKb(100);
+		
+		options.addChrToExclude("20");
+		
+		FilterCommand command = new FilterCommand(logger, options, new VariantContextLdCalculator());
+		
+		command.runCommand();
+		
+		
+		assertTrue(out.exists());
+		
+		VCFFileReader reader = new VCFFileReader(out,false);
+		int count = 0;
+		for(VariantContext vc : reader) {
+			count++;
+		}
+		reader.close();
+		
+		out.delete();
+		assertEquals(0,count);
 		
 	}
 

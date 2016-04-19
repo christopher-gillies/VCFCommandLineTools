@@ -31,6 +31,8 @@ public class ApplicationOptions {
 	private String referenceSeq;
 	private String manifest;
 	
+	private List<String> chrsToExclude;
+	
 	private List<String> sites;
 	
 	private List<String> infos;
@@ -48,6 +50,7 @@ public class ApplicationOptions {
 		vcfs = new LinkedList<File>();
 		sites = new LinkedList<String>();
 		infos = new LinkedList<>();
+		chrsToExclude = new LinkedList<>();
 	}
 	
 	public enum Command {
@@ -156,7 +159,14 @@ public class ApplicationOptions {
 		return this.sites;
 	}
 	
-
+	public void addChrToExclude(String chr) {
+		this.chrsToExclude.add(chr);
+	}
+	
+	public List<String> getChrsToExclude() {
+		return this.chrsToExclude;
+	}
+	
 	public void addSite(String site) {
 		this.sites.add(site);
 	}
