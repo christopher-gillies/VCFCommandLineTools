@@ -252,7 +252,8 @@ public class MergeVCFColumnsCommand implements RunCommand {
 					
 				} else if(iter2.hasNext()) {
 					//just skip remaining variants
-					VariantContext current = iter1.next();
+					//fixed bug/ was iter1 changed to iter2
+					VariantContext current = iter2.next();
 					countFile2++;
 					
 					if(previous2 != null && current != null && comparator.compare(previous2, current) > 0) {
