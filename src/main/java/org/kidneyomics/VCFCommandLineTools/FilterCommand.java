@@ -56,11 +56,20 @@ public class FilterCommand implements RunCommand {
 		File vcf = applicationOptions.getVcfs().get(0);
 		int windowSizeKb = applicationOptions.getWindowSizeKb();
 		int windowSizeBp = windowSizeKb * 1000;
+		int minAc = applicationOptions.getMinAc();
+		
+
 		logger.info("Options in effect");
 		logger.info("vcf: " + vcf.getAbsolutePath());
 		logger.info("maxLd: " + maxLd);
 		logger.info("windowSizeKb: " + windowSizeKb);
 		logger.info("outfile: " + outfile);
+		
+		if(minAc > 0) {
+			logger.info("minAc: " + minAc);
+			filters.add(new MinACVariantContextFilter(minAc));
+		}
+		
 		
 		VCFFileReader reader = new VCFFileReader(vcf, false);
 		Iterator<VariantContext> iter = reader.iterator();
@@ -194,6 +203,8 @@ public class FilterCommand implements RunCommand {
 		//apply single filters
 		for(VariantContextFilter filter : filters) {
 			if(!filter.keep(vc)) {
+				//remove this variant
+				queue.poll();
 				return null;
 			}
 		}

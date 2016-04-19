@@ -144,7 +144,7 @@ public class FilterCommandTest {
 				
 		options.addVcfFile(vcf1.getFile().getAbsolutePath());
 		
-		
+		options.setMinAc(10);
 		File tmpDir = FileUtils.getTempDirectory();
 		File out = new File(tmpDir.getAbsolutePath() + "/" + "result.vcf.gz");
 		options.setOutFile(out.getAbsolutePath());
