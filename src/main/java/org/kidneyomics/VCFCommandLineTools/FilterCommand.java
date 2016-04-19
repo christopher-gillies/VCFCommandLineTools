@@ -15,6 +15,7 @@ import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import htsjdk.samtools.util.BlockCompressedOutputStream;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -27,6 +28,7 @@ import htsjdk.variant.vcf.VCFHeader;
  * @author cgillies
  * This is currently setup for only
  */
+@Component()
 public class FilterCommand implements RunCommand {
 
 	Logger logger;

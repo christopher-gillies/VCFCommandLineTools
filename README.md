@@ -120,8 +120,8 @@ $vcfTools --command mergeVcfColumns --outfile "$OUT" --vcf "$VCF1" --vcf "$VCF2"
 ```
 export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
 export VCF1="/home/cgillies/programs/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.relabel.vcf.gz"
-
-$vcfTools --command mergeVcfColumns --outfile "$OUT" --vcf "$VCF1" --maxLd 0.2 --windowSizeKb 1000
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --maxLd 0.2 --windowSizeKb 1000
 ```
 
 ## Help
