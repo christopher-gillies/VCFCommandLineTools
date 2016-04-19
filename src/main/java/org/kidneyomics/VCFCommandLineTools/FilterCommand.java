@@ -55,8 +55,12 @@ public class FilterCommand implements RunCommand {
 		String outfile = applicationOptions.getOutFile();
 		File vcf = applicationOptions.getVcfs().get(0);
 		int windowSizeKb = applicationOptions.getWindowSizeKb();
-		
-		
+		int windowSizeBp = windowSizeKb * 1000;
+		logger.info("Options in effect");
+		logger.info("vcf: " + vcf.getAbsolutePath());
+		logger.info("maxLd: " + maxLd);
+		logger.info("windowSizeKb: " + windowSizeKb);
+		logger.info("outfile: " + outfile);
 		
 		VCFFileReader reader = new VCFFileReader(vcf, false);
 		Iterator<VariantContext> iter = reader.iterator();
@@ -104,16 +108,16 @@ public class FilterCommand implements RunCommand {
 				
 				if(lead == null) {
 					queue.add(next);
-				} else if(lead.getContig().equals(next.getContig()) || next.getStart() - lead.getStart() > windowSizeKb) {
+				} else if(lead.getContig().equals(next.getContig()) && next.getStart() - lead.getStart() > windowSizeBp) {
 					//if the next variant is from he same chromosome but the position is over 1mb away, then filter the variants
 					//filter the queue
-					VariantContext head = applyFilters(queue,maxLd, windowSizeKb);
+					VariantContext head = applyFilters(queue,maxLd, windowSizeBp);
 					
 					if(head != null) {
 						//write the lead marker to file
 						variantsKept++;
 						if(variantsKept % 10000 == 0) {
-							logger.info(variantsRead + " variants kept");
+							logger.info(variantsKept + " variants kept");
 						}
 						writer.write(encoder.encode(head));
 						writer.write("\n");
@@ -125,13 +129,13 @@ public class FilterCommand implements RunCommand {
 					//clear out the queue
 					while(queue.peek() != null) {
 						//filter polls the queue
-						VariantContext head = applyFilters(queue,maxLd,windowSizeKb);
+						VariantContext head = applyFilters(queue,maxLd,windowSizeBp);
 						
 						if(head != null) {
 							variantsKept++;
 							//write the lead marker to file
 							if(variantsKept % 10000 == 0) {
-								logger.info(variantsRead + " variants kept");
+								logger.info(variantsKept + " variants kept");
 							}
 							writer.write(encoder.encode(head));
 							writer.write("\n");
@@ -147,13 +151,13 @@ public class FilterCommand implements RunCommand {
 			//filter out remaining variants out of queue
 			while(queue.peek() != null) {
 				//filter polls the queue
-				VariantContext head = applyFilters(queue,maxLd,windowSizeKb);
+				VariantContext head = applyFilters(queue,maxLd,windowSizeBp);
 				
 				if(head != null) {
 					//write the lead marker to file
 					variantsKept++;
 					if(variantsKept % 10000 == 0) {
-						logger.info(variantsRead + " variants kept");
+						logger.info(variantsKept + " variants kept");
 					}
 					writer.write(encoder.encode(head));
 					writer.write("\n");
@@ -175,11 +179,11 @@ public class FilterCommand implements RunCommand {
 				}
 			}
 		
-		logger.info(variantsKept + " variants passed filters of " + variantsRead + " (" + String.format("%.2f",(variantsKept/ (double) variantsRead) * 100) + ")");
+		logger.info(variantsKept + " variants passed filters of " + variantsRead + " (" + String.format("%.2f",(variantsKept/ (double) variantsRead) * 100) + "%)");
 	}
 	
 	
-	VariantContext applyFilters(Queue<VariantContext> queue, double maxLd, double windowSizeKb) {
+	VariantContext applyFilters(Queue<VariantContext> queue, double maxLd, int windowSizeBp) {
 		
 		//apply single variant filters
 		VariantContext vc = queue.peek();
@@ -199,7 +203,7 @@ public class FilterCommand implements RunCommand {
 			//no need to filter subsequent markers
 			vc = queue.poll();
 		} else {
-			vc = filterQueueLd(queue,maxLd,windowSizeKb);
+			vc = filterQueueLd(queue,maxLd,windowSizeBp);
 		}
 		return vc;
 	}
@@ -212,8 +216,7 @@ public class FilterCommand implements RunCommand {
 	 * @param windowSizeKb -- the maximum window size in kilobases
 	 * @return returns the lead marker that is popped off of the queue, and removes all markers whose LD is greater than maxLd
 	 */
-	VariantContext filterQueueLd(Queue<VariantContext> queue, double maxLd, double windowSizeKb) {
-		double windowSizebp = windowSizeKb * 1000;
+	VariantContext filterQueueLd(Queue<VariantContext> queue, double maxLd, int windowSizeBp) {
 		VariantContext vc1 = queue.poll();
 		if(vc1 == null) {
 			return null;
@@ -222,7 +225,7 @@ public class FilterCommand implements RunCommand {
 		Iterator<VariantContext> iter = queue.iterator();
 		while(iter.hasNext()) {
 			VariantContext vc2 = iter.next();
-			if(!vc1.getContig().equals(vc2.getContig()) || vc2.getStart() - vc1.getStart() > windowSizebp) {
+			if(!vc1.getContig().equals(vc2.getContig()) || vc2.getStart() - vc1.getStart() > windowSizeBp) {
 				break;
 			}
 			

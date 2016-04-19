@@ -115,7 +115,7 @@ $vcfTools --command mergeVcfColumns --outfile "$OUT" --vcf "$VCF1" --vcf "$VCF2"
 ```
 
 
-## Example ldprune
+## Example ld-prune (Note: this is setup for unphased markers and LD is estimated with Pearson correlation)
 
 ```
 export vcfTools="java -jar /home/cgillies/programs/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
