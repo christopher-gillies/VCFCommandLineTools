@@ -1,7 +1,5 @@
 package org.kidneyomics.VCFCommandLineTools;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -12,7 +10,6 @@ import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.rabbitmq.client.Command;
 
 import java.io.File;
 
@@ -40,9 +37,12 @@ public class ApplicationOptions {
 	
 	private GT_RENDER_TYPE gtRendererType = GT_RENDER_TYPE.NUMERIC;
 	
+	private double maxLd = 1.0;
+	
+	private int windowSizeKb = 1000;
 	
 	@Autowired
-	ApplicationOptions(LoggerService loggerService) throws UnsupportedEncodingException {
+	ApplicationOptions(LoggerService loggerService) {
 		this.logger = loggerService.getLogger(this);
 		jarLocation =  new ApplicationHome(ApplicationOptions.class).getSource().getAbsolutePath();
 		vcfs = new LinkedList<File>();
@@ -60,7 +60,8 @@ public class ApplicationOptions {
 		FIND_OVERLAPPING_SAMPLES_FROM_LIST,
 		MAKE_VCF_FROM_ILLUMINA,
 		MAKE_VCF_FROM_ILLUMINA_REPORTS,
-		MERGE_VCF_COLUMNS
+		MERGE_VCF_COLUMNS,
+		FILTER
 	}
 
 	
@@ -140,6 +141,9 @@ public class ApplicationOptions {
 		case "mergeVcfColumns":
 			command = Command.MERGE_VCF_COLUMNS;
 			break;
+		case "filter":
+			command = Command.FILTER;
+			break;
 		default: 
 			command = Command.NONE;
 			break;
@@ -191,6 +195,23 @@ public class ApplicationOptions {
 
 	public void setMinAc(int minAc) {
 		this.minAc = minAc;
+	}
+
+	
+	public double getMaxLd() {
+		return maxLd;
+	}
+
+	public void setMaxLd(double maxLd) {
+		this.maxLd = maxLd;
+	}
+
+	public int getWindowSizeKb() {
+		return windowSizeKb;
+	}
+
+	public void setWindowSizeKb(int windowSizeKb) {
+		this.windowSizeKb = windowSizeKb;
 	}
 
 	public Command validate() {
@@ -301,6 +322,24 @@ public class ApplicationOptions {
 				throw new IllegalStateException("Please specify two vcf files");
 			}
 			
+			
+			break;
+		case FILTER:
+			if(vcfs.size() != 1) {
+				throw new IllegalArgumentException("Please specify one VCF");
+			}
+			
+			if(StringUtils.isEmpty(this.getOutFile())) {
+				throw new IllegalStateException("Please specify an output file");
+			}
+			
+			//if(maxLd <= 0) {
+			//	throw new IllegalArgumentException("maxLd must be greater than 0");
+			//}
+			
+			if(windowSizeKb <= 0) {
+				throw new IllegalArgumentException("windowSizeKb must be greater than 0");
+			}
 			
 			break;
 		case HELP:

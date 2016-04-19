@@ -5,12 +5,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
 
-public enum VariantContextLdCalculator {
-	INSTANCE;
+@Component()
+@Scope("singleton")
+public class VariantContextLdCalculator {
+
 	
 	public double pearsonR2(VariantContext vc1, VariantContext vc2) {
 		

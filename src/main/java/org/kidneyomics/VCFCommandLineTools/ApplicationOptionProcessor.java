@@ -94,7 +94,7 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList, makeVcfFromManifest, makeVcfFromReports. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field. makeVcfFromManifest takes an input of a illumina manifest file and creates a vcf sites file for sites that have a reference allele. makeVcfFromReports creates a vcf from illumina standard report files. mergeVcfColumns merges two vcf files (only biallelic sites; no duplicate sample ids)")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList, makeVcfFromManifest, makeVcfFromReports. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field. makeVcfFromManifest takes an input of a illumina manifest file and creates a vcf sites file for sites that have a reference allele. makeVcfFromReports creates a vcf from illumina standard report files. mergeVcfColumns merges two vcf files (only biallelic sites; no duplicate sample ids). filter -- remove variants from vcf, can be used to ld-prune")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -112,6 +112,27 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.required(false)
 		.build();
 		options.addOption(minAcOption);
+		
+		
+		Option maxLdOption = Option.builder()
+		.argName("maxLd")
+		.longOpt("maxLd")
+		.desc("The maximum allowable pairwise ld when filtering variants")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(maxLdOption);
+		
+		Option windowSizeKbOption = Option.builder()
+		.argName("windowSizeKb")
+		.longOpt("windowSizeKb")
+		.desc("The window size in kilobases when filtering variants")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(windowSizeKbOption);
 		
 		Option outfileOp = Option.builder()
 		.argName("outfile")
@@ -232,6 +253,14 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		if(cmd.hasOption("minAc")) {
 			applicationOptions.setMinAc(Integer.parseInt(cmd.getOptionValue("minAc")));
+		}
+		
+		if(cmd.hasOption("maxLd")) {
+			applicationOptions.setMaxLd(Double.parseDouble(cmd.getOptionValue("maxLd")));
+		}
+		
+		if(cmd.hasOption("windowSizeKb")) {
+			applicationOptions.setWindowSizeKb(Integer.parseInt(cmd.getOptionValue("windowSizeKb")));
 		}
 		
 	}

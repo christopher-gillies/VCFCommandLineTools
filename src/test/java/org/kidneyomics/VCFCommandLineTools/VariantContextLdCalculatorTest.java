@@ -13,6 +13,8 @@ import htsjdk.variant.variantcontext.VariantContextBuilder;
 
 public class VariantContextLdCalculatorTest {
 
+	VariantContextLdCalculator service = new VariantContextLdCalculator();
+	
 	@Test
 	public void test1() {
 		
@@ -61,7 +63,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(-1.0,r2,0.0001);
 	}
@@ -114,7 +116,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(1,r2,0.0001);
 	}
@@ -167,7 +169,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(1,r2,0.0001);
 	}
@@ -220,7 +222,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(0.8741,r2,0.0001);
 	}
@@ -273,7 +275,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(0.4596,r2,0.0001);
 	}
@@ -326,7 +328,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(0.009380863,r2,0.0001);
 	}
@@ -379,7 +381,7 @@ public class VariantContextLdCalculatorTest {
 				);
 		VariantContext vc2 = builder.make();
 		
-		double r2 = VariantContextLdCalculator.INSTANCE.pearsonR2(vc1, vc2);
+		double r2 = service.pearsonR2(vc1, vc2);
 		
 		assertEquals(0.147929,r2,0.0001);
 	}

@@ -55,6 +55,8 @@ public class VcfCommandLineToolsApplication {
 	    	case MERGE_VCF_COLUMNS:
 	    		runCommand = context.getBean(MergeVCFColumnsCommand.class);
 	    		break;
+	    	case FILTER:
+	    		runCommand = context.getBean(FilterCommand.class);
 	    	default:
 	    			
 	    	}
