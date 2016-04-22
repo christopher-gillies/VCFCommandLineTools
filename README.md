@@ -145,16 +145,17 @@ $vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --hwe 0.01 --minAc 0 -
 ```
 
 ## Example filter using R script string
-### The --filterString option must return and R logical value. That is the last line of the script should be a logical value. Sites are kept if the result is TRUE otherwise it will filter the site out
+### The --filterString option must return a R logical value. That is the last line of the script should be a logical value. Sites are kept if the result is TRUE otherwise it will filter the site out
 ### Variables available:
 * chr -- The chromosome
 * start -- The start position
 * stop -- The stop position
+* id -- The variant id
 * ref -- The reference allele
 * alt -- The first alternative allele
 * qual -- The quality score
 * filters -- The filter information for the variant
-* info -- A list() object representing the info field (only those annotated in the VCF header). For example, if you have an AC info item it could be accessed info$AC in the R script. list(ID1=list(ID="ID1",GT=0),ID2=list(ID="ID2",GT=1))
+* info -- A list() object representing the info field (only those annotated in the VCF header). For example, if you have an AC info item it could be accessed info[['AC']] in the R script.
 * samples -- a list() of sample ids
 * gtInfo -- a list() of lists() one for each sample. This can be used to pull of genotype specific format fields. For example to get a list of genotypes from all samples you could write
 ```
@@ -192,6 +193,14 @@ export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE
 export VCF1="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.merged.reports.rc.dict.sorted.filtered.1000G.vcf.gz"
 export OUT="/tmp/test.vcf.gz"
 $vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "gc = sapply(gtInfo,FUN=function(x){ x[['GCScore']] }); gt = sapply(gtInfo,FUN=function(x){ x[['GTScore']] }); mean(gc,an.rm=T) > mean(gt[gt != 0],na.rm=T)"
+```
+
+### R filter using info field. Find the variant with IlluminaId == '20:10036280-GA-0_T_F_2299624158' and print the IlluminaId for every variant
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.sites.vcf"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "print(info[['IlluminaId']]);info[['IlluminaId']] == '20:10036280-GA-0_T_F_2299624158'"
 ```
 
 ## Help

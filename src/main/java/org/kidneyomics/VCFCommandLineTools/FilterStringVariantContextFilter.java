@@ -49,7 +49,14 @@ public class FilterStringVariantContextFilter implements VariantContextFilter {
 	@Override
 	public boolean keep(VariantContext vc) {
 		
-		ListVector gtInfo = gtConverter.convert(vc.getGenotypes());
+		if(vc.hasGenotypes()) {
+			ListVector gtInfo = gtConverter.convert(vc.getGenotypes());
+			//put genotype variable into R environment
+			engine.put("gtInfo", gtInfo);
+		} else {
+			engine.put("gtInfo", null);
+		}
+		
 		ListVector infoField = infoConverter.convert(vc.getAttributes());
 		//put basic info
 		engine.put("chr", vc.getContig());
@@ -64,8 +71,7 @@ public class FilterStringVariantContextFilter implements VariantContextFilter {
 		engine.put("info", infoField);
 		
 		engine.put("samples", vc.getSampleNames());
-		//put genotype variable into R environment
-		engine.put("gtInfo", gtInfo);
+		
 		try {
 			LogicalVector result = (LogicalVector) engine.eval(filterString);
 			//What should we do about these?

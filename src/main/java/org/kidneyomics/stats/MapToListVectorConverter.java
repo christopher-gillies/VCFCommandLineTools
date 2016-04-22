@@ -74,7 +74,11 @@ public class MapToListVectorConverter implements Converter<Map<String,Object>, L
 						Double items = (Double) val;
 						DoubleArrayVector vec = new DoubleArrayVector(items);
 						builder.add(key, vec);
-					}
+					} else if(val instanceof String) {
+						Double items = Double.parseDouble((String) val);
+						DoubleArrayVector vec = new DoubleArrayVector(items);
+						builder.add(key, vec);
+					} 
 					
 					break;
 				}
@@ -97,15 +101,19 @@ public class MapToListVectorConverter implements Converter<Map<String,Object>, L
 						Integer items = (Integer) val;
 						IntArrayVector vec = new IntArrayVector(items);
 						builder.add(key, vec);
-					}
+					} else if(val instanceof String) {
+						Integer items = Integer.parseInt((String) val);
+						IntArrayVector vec = new IntArrayVector(items);
+						builder.add(key, vec);
+					} 
 					
 					break;
 				}
 				case Character:
 				{
 					
-					char value = (char) input.get(key);
-					builder.add(key, new String(new char[] { value }));
+					String value = (String) input.get(key);
+					builder.add(key, value);
 	
 					break;
 				}
