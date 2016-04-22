@@ -29,7 +29,13 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		
-		
+		<!-- Lang -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+
 		<!-- CLI -->
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -66,6 +72,15 @@
 			<version>1.141</version>
 		</dependency>
 		
+		
+		<!--  Renjin -->
+	  <dependency>
+	    <groupId>org.renjin</groupId>
+	    <artifactId>renjin-script-engine</artifactId>
+	    <version>RELEASE</version>
+	  </dependency>
+
+
 		<!-- biojava -->
 		<!--
 		<dependency>
@@ -105,6 +120,15 @@
 		</dependency>
 	</dependencies>
 	
+	<repositories>
+	  <repository>
+	    <id>bedatadriven</id>
+	    <name>bedatadriven public repo</name>
+	    <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+	  </repository>
+	</repositories>
+	
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -129,6 +153,7 @@
 			
 		</plugins>
 	</build>
+	
 	
 
 </project>

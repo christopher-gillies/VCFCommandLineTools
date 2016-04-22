@@ -8,15 +8,20 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import htsjdk.samtools.util.BlockCompressedOutputStream;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -32,18 +37,27 @@ import htsjdk.variant.vcf.VCFHeader;
 @Component()
 public class FilterCommand implements RunCommand {
 
-	Logger logger;
-	ApplicationOptions applicationOptions;
-	VariantContextLdCalculator ldCalc;
+	private Logger logger;
+	private ApplicationOptions applicationOptions;
+	private VariantContextLdCalculator ldCalc;
+	private DelimitedFileParser parser;
 	
-	LinkedList<VariantContextFilter> filters = new LinkedList<>();
+	
+	private LinkedList<VariantContextFilter> filters = new LinkedList<>();
 	
 	@Autowired
 	public FilterCommand(LoggerService loggerService, ApplicationOptions applicationOptions, VariantContextLdCalculator ldCalc) {
 		this.logger = loggerService.getLogger(this);
 		this.applicationOptions = applicationOptions;
 		this.ldCalc = ldCalc;
+		this.parser = new DelimitedFileParser();
 	}
+	
+	//override default parser
+	public void setParser(DelimitedFileParser parser) {
+		this.parser = parser;
+	}
+	
 	
 	
 	@Override
@@ -58,6 +72,12 @@ public class FilterCommand implements RunCommand {
 		int windowSizeKb = applicationOptions.getWindowSizeKb();
 		int windowSizeBp = windowSizeKb * 1000;
 		int minAc = applicationOptions.getMinAc();
+		double hwe = applicationOptions.getHwe();
+		String infile = applicationOptions.getInFile();
+		String popCol = applicationOptions.getPopCol();
+		String idCol = applicationOptions.getIdCol();
+		String filterString = applicationOptions.getFilterString();
+		
 		List<String> chrsToExclude = applicationOptions.getChrsToExclude();
 		
 		logger.info("Options in effect");
@@ -66,11 +86,13 @@ public class FilterCommand implements RunCommand {
 		logger.info("windowSizeKb: " + windowSizeKb);
 		logger.info("outfile: " + outfile);
 		
+		//check to see if we should add minAc filter
 		if(minAc > 0) {
 			logger.info("minAc: " + minAc);
 			filters.add(new MinACVariantContextFilter(minAc));
 		}
 		
+		//check to see if we should add exclude chr filter
 		if(chrsToExclude.size() > 0) {
 			for(String chr : chrsToExclude) {
 				logger.info("Excluding chr: " + chr);
@@ -78,10 +100,52 @@ public class FilterCommand implements RunCommand {
 			}
 		}
 		
+		//check to see if we should add hwe filter
+		if(hwe != -1.0) {
+			if(infile != null && popCol != null && idCol != null) {
+				
+				//TODO: read ped file
+				//read population map
+				try {
+					List<Map<String,String>> pedData = parser.parseFile(new File(infile));
+					ListMapToMapConverter mapConverter = new ListMapToMapConverter(idCol, popCol);
+					Map<String,String> popMap = mapConverter.convert(pedData);
+					logger.info("Population specific HWE test");
+					logger.info("idCol: " + idCol);
+					logger.info("popCol: " + popCol);
+					logger.info("infile: " + infile);
+					filters.add( new HWEVariantContextFilter(hwe,popMap));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				
+				filters.add( new HWEVariantContextFilter(hwe));
+			}
+			logger.info("hwe threshold: " + hwe);
+		}
+		
+		
 		VCFFileReader reader = new VCFFileReader(vcf, false);
 		Iterator<VariantContext> iter = reader.iterator();
 		
 		VCFHeader header = reader.getFileHeader();
+		
+		
+		//add filterString filter
+		if(!StringUtils.isEmpty(filterString) ) {
+		    ScriptEngineManager manager = new ScriptEngineManager();
+		    // create a Renjin engine:
+		    ScriptEngine engine = manager.getEngineByName("Renjin");
+		    // check if the engine has loaded correctly:
+		    if(engine == null) {
+		    	reader.close();
+		        throw new RuntimeException("Renjin Script Engine not found on the classpath.");
+		    }
+			
+			filters.add(new FilterStringVariantContextFilter(engine, filterString, header));
+		}
 		
 		/*
 		 * Create encoder

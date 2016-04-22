@@ -36,7 +36,7 @@ public class VariantContextComparator implements Comparator<VariantContext> {
 			CHR_TYPE type1 = CHR_TYPE.classify(chr1);
 			CHR_TYPE type2 = CHR_TYPE.classify(chr2);
 
-			int cmp = type1.compareTo(type2);
+			int cmp = Integer.compare(type1.getVal(), type2.getVal());
 			if(cmp < 0) {
 				return -1;
 			} else if(cmp > 0) {
@@ -68,12 +68,25 @@ public class VariantContextComparator implements Comparator<VariantContext> {
 	
 	
 	public enum CHR_TYPE {
-		NUMERIC,
-		X,
-		Y,
-		MT;
+		NUMERIC(0),
+		X(1),
+		Y(2),
+		XY(3),
+		MT(4);
 		
+		private final int val;
 		
+		CHR_TYPE(int val) {
+			this.val = val;
+		}
+		
+		public int getVal() {
+			return val;
+		}
+		
+		private static boolean isXY(String in) {
+			return in.equalsIgnoreCase("XY");
+		}
 		
 		private static boolean isX(String in) {
 			return in.equalsIgnoreCase("X");
@@ -94,6 +107,8 @@ public class VariantContextComparator implements Comparator<VariantContext> {
 		public static CHR_TYPE classify(String chr) {
 			if(isX(chr)) {
 				return X;
+			} else if(isXY(chr)) {
+				return XY;
 			} else if(isY(chr)) {
 				return Y;
 			} else if(isMT(chr)) {
@@ -101,7 +116,7 @@ public class VariantContextComparator implements Comparator<VariantContext> {
 			} else if(isNumeric(chr)) {
 				return NUMERIC;
 			} else {
-				throw new IllegalArgumentException("Unsupported chromosome");
+				throw new IllegalArgumentException("Unsupported chromosome: " + chr);
 			}
 		}
 

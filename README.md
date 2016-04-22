@@ -124,6 +124,76 @@ export OUT="/tmp/test.vcf.gz"
 $vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --maxLd 0.2 --windowSizeKb 1000 --minAc 2 --excludeChr Y --excludeChr X --excludeChr MT
 ```
 
+
+## Example filter by hwe across all population (remove if the excat test HWE p-value is less than 0.01)
+
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --hwe 0.01 --minAc 0 
+```
+
+## Example filter by hwe across each population (remove if the excat test HWE p-value is less than 0.01 in any population)
+### The population information is in a tab delimited infile, where the first row is a header line. The idCol option specifies the column of the sample id, and the popCol option specifies the population column
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+export ANCESTRY="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/omni_samples.20141118.panel"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --hwe 0.01 --minAc 0 --infile $ANCESTRY --idCol sample --popCol pop
+```
+
+## Example filter using R script string
+### The --filterString option must return and R logical value. That is the last line of the script should be a logical value. Sites are kept if the result is TRUE otherwise it will filter the site out
+### Variables available:
+* chr -- The chromosome
+* start -- The start position
+* stop -- The stop position
+* ref -- The reference allele
+* alt -- The first alternative allele
+* qual -- The quality score
+* filters -- The filter information for the variant
+* info -- A list() object representing the info field (only those annotated in the VCF header). For example, if you have an AC info item it could be accessed info$AC in the R script. list(ID1=list(ID="ID1",GT=0),ID2=list(ID="ID2",GT=1))
+* samples -- a list() of sample ids
+* gtInfo -- a list() of lists() one for each sample. This can be used to pull of genotype specific format fields. For example to get a list of genotypes from all samples you could write
+```
+gts = sapply(gtInfo,FUN=function(x){ x[['GT']] });
+```
+* Note that the GT field is encoded as 0 for HOM_REF, 1 For HET, and 2 HOM_ALT.
+
+### This code will only print sites with exactly 11 heterozygotes
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "gts = sapply(gtInfo,FUN=function(x){ x[['GT']] }); sum( gts == 1 ) == 11;"
+```
+
+### Combination of hwe filter and R filter and ld filter
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --hwe 0.1 --maxLd 0.1 --filterString "gts = sapply(gtInfo,FUN=function(x){ x[['GT']] }); sum( gts == 1 ) == 11;"
+```
+
+### R filter using GCScore field from VCF. Only keep variants if the mean GCScore across all non-zero subjects is greater than 0.7
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.merged.reports.rc.dict.sorted.filtered.1000G.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "gc = sapply(gtInfo,FUN=function(x){ x[['GCScore']] }); mean(gc,an.rm=T) > 0.7"
+```
+
+### R filter using GCScore field from VCF. Only keep variants if the mean GCScore is greater than the mean non-zero GTScore
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Google Drive/1_7_2016_Megachip/chr20.merged.reports.rc.dict.sorted.filtered.1000G.vcf.gz"
+export OUT="/tmp/test.vcf.gz"
+$vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "gc = sapply(gtInfo,FUN=function(x){ x[['GCScore']] }); gt = sapply(gtInfo,FUN=function(x){ x[['GTScore']] }); mean(gc,an.rm=T) > mean(gt[gt != 0],na.rm=T)"
+```
+
 ## Help
 ```
 $vcfTools --help

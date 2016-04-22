@@ -43,6 +43,14 @@ public class ApplicationOptions {
 	
 	private int windowSizeKb = 1000;
 	
+	//Hardy-Weinberg filtering options
+	private String idCol = null;
+	private String popCol = null;
+	private double hwe = -1;
+	
+	//R based filter string MUST RETURN A LOGICAL
+	private String filterString = null;
+	
 	@Autowired
 	ApplicationOptions(LoggerService loggerService) {
 		this.logger = loggerService.getLogger(this);
@@ -223,6 +231,40 @@ public class ApplicationOptions {
 	public void setWindowSizeKb(int windowSizeKb) {
 		this.windowSizeKb = windowSizeKb;
 	}
+	
+	
+
+	public String getIdCol() {
+		return idCol;
+	}
+
+	public void setIdCol(String idCol) {
+		this.idCol = idCol;
+	}
+
+	public String getPopCol() {
+		return popCol;
+	}
+
+	public void setPopCol(String popCol) {
+		this.popCol = popCol;
+	}
+
+	public double getHwe() {
+		return hwe;
+	}
+
+	public void setHwe(double hwe) {
+		this.hwe = hwe;
+	}
+
+	public String getFilterString() {
+		return filterString;
+	}
+
+	public void setFilterString(String filterString) {
+		this.filterString = filterString;
+	}
 
 	public Command validate() {
 		switch(command) {
@@ -349,6 +391,22 @@ public class ApplicationOptions {
 			
 			if(windowSizeKb <= 0) {
 				throw new IllegalArgumentException("windowSizeKb must be greater than 0");
+			}
+			
+			if(idCol != null && !idCol.isEmpty() && (popCol == null || popCol.isEmpty()) ) {
+				throw new IllegalArgumentException("when specifying a idCol please specify a popCol too");
+			}
+			
+			if(popCol != null && !popCol.isEmpty() && (idCol == null || idCol.isEmpty()) ) {
+				throw new IllegalArgumentException("when specifying a popCol please specify a idCol too");
+			}
+			
+			if(popCol != null && idCol != null && StringUtils.isEmpty(this.getInFile())) {
+				throw new IllegalArgumentException("please specify an infile when specifying a idCol and popCol");
+			}
+			
+			if(hwe != -1 && hwe <= 0) {
+				throw new IllegalArgumentException("when specifying a hwe threshold, please make sure it is greater than 0");
 			}
 			
 			break;

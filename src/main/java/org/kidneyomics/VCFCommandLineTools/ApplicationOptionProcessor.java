@@ -146,6 +146,47 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.build();
 		options.addOption(windowSizeKbOption);
 		
+		
+		Option hweOption = Option.builder()
+		.argName("hwe")
+		.longOpt("hwe")
+		.desc("The Hardy-Weinberg p-value threshold (Exact test); used in filtering")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(hweOption);
+		
+		Option idColOption = Option.builder()
+		.argName("idCol")
+		.longOpt("idCol")
+		.desc("The identity column to pull out of the infile. Requires a header")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(idColOption);
+		
+		Option popColOption = Option.builder()
+		.argName("popCol")
+		.longOpt("popCol")
+		.desc("The population column to pull out of the infile. Requires a header")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(popColOption);
+		
+		Option filterStringOption = Option.builder()
+		.argName("filterString")
+		.longOpt("filterString")
+		.desc("The filter string to appy to the filter command. Each variants genotypes will be put into a variable gtInfo. This is a list that acts much like a hash table. Any valid R code can be used, however, it MUST return a LOGICAL R value.")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(filterStringOption);
+		
 		Option outfileOp = Option.builder()
 		.argName("outfile")
 		.longOpt("outfile")
@@ -252,6 +293,23 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		if(cmd.hasOption("command")) {
 			applicationOptions.setCommand(cmd.getOptionValue("command"));
+		}
+		
+		//additional filtering options
+		if(cmd.hasOption("hwe")) {
+			applicationOptions.setHwe(Double.parseDouble(cmd.getOptionValue("hwe")));
+		}
+		
+		if(cmd.hasOption("idCol")) {
+			applicationOptions.setIdCol(cmd.getOptionValue("idCol"));
+		}
+		
+		if(cmd.hasOption("popCol")) {
+			applicationOptions.setPopCol(cmd.getOptionValue("popCol"));
+		}
+		
+		if(cmd.hasOption("filterString")) {
+			applicationOptions.setFilterString(cmd.getOptionValue("filterString"));
 		}
 		
 		if(cmd.hasOption("outfile")) {
