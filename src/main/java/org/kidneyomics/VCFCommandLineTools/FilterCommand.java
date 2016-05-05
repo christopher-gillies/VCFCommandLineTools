@@ -150,7 +150,7 @@ public class FilterCommand implements RunCommand {
 		/*
 		 * Create encoder
 		 */
-		VCFEncoder encoder = new VCFEncoder(header, false, false);
+		VCFEncoder encoder = new VCFEncoder(header, true, false);
 		
 		BufferedWriter writer = null;
 		
