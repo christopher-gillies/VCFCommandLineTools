@@ -33,8 +33,9 @@ public class ConcordanceCommand implements RunCommand {
 
 			assert samples.size() == 2;
 			
-			String testSample = samples.get(0);
-			String truthSample = samples.get(1);
+			String truthSample = samples.get(0);
+			String testSample = samples.get(1);
+			
 
 			
 			if(StringUtils.isEmpty(truthSample) || StringUtils.isEmpty(testSample)) {
@@ -69,7 +70,7 @@ public class ConcordanceCommand implements RunCommand {
 
 			// Store test variants for testSample
 			FilterableVariantContextReader testReader = FilterableVariantContextReader
-					.createByAppliationOptionsWithVCFIndex(applicationOptions, 0);
+					.createByAppliationOptionsWithVCFIndex(applicationOptions, 1);
 			if (!testReader.getFileHeader().getSampleNameToOffset().containsKey(testSample)) {
 
 				testReader.close();
