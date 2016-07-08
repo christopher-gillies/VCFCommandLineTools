@@ -205,6 +205,10 @@ $vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterStri
 
 
 ### Concordance
+The first --vcf is the truth vcf
+The second --vcf is the test vcf
+The first --sample is the truth sample id
+The second -sample is the test sample id
 ```
 export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
 export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
