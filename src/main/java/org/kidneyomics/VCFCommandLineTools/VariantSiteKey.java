@@ -30,7 +30,7 @@ public class VariantSiteKey {
 	public static VariantSiteKey create(String variantKey) {
 		String vals[] = variantKey.split(":");
 		if(vals.length != 4) {
-			throw new IllegalArgumentException("Format should be chr:pos:ref:alt");
+			throw new IllegalArgumentException("Format should be chr:pos:ref:alt " + variantKey);
 		}
 		
 		VariantSiteKey result = new VariantSiteKey(vals[0], Integer.parseInt(vals[1]), vals[2], vals[3]);
