@@ -130,7 +130,8 @@ public class ConcordanceCalculator {
 		for(Map.Entry<VariantSiteKey,Integer> entry : testSampleVariants.entrySet()) {	
 			if(!truthSampleVariants.containsKey(entry.getKey())) {
 				int testGt = entry.getValue();
-				int truthGt = testSampleVariants.get(entry.getKey());
+				//it is not in the truth variants so the truthGt is missing!
+				int truthGt = -1;
 				res.update(truthGt, testGt);
 			}
 		}
