@@ -203,24 +203,95 @@ export OUT="/tmp/test.vcf.gz"
 $vcfTools --command filter --outfile "$OUT" --vcf "$VCF1" --minAc 0 --filterString "print(info[['IlluminaId']]);info[['IlluminaId']] == '20:10036280-GA-0_T_F_2299624158'"
 ```
 
+
+### Concordance
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+
+$vcfTools --command concordance --vcf "$VCF1" --vcf "$VCF1" --minAc 10 --sample HG00100 --sample HG00100
+
+
+Truth VCF: /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz
+Test VCF: /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz
+Truth Sample: HG00100
+Test Sample: HG00100
+True Positives: 16554
+False Positives: 0
+True Negatives: 12676
+False Negatives: 0
+Sensitivity: 1.0
+Specificity: 1.0
+False Discovery Rate: 0.0
+```
+
 ## Help
 ```
-$vcfTools --help
+$vcfTools --help            
        _  _  _                                         ___             
  \  / /  |_ /   _  ._ _  ._ _   _. ._   _| |  o ._   _  |  _   _  |  _ 
   \/  \_ |  \_ (_) | | | | | | (_| | | (_| |_ | | | (/_ | (_) (_) | _> 
                                                                        
 usage: VCFCommandLineTools
-    --command <command>   The command you would like to perform:
-                          findOverlap, selectSites, viewGenotypes
-    --help                Print the help message
-    --infile <infile>     The to read in
-    --minAc <minAc>       The minimum allele count for a variant to be
-                          considered
-    --nucleotide          Show nucleotides instead of numeric genotype
-    --outfile <outfile>   The file to write out to
-    --site <site>         please specify a site
-    --vcf <vcf>           a vcf file
+    --command <command>             The command you would like to perform:
+                                    findOverlap, selectSites,
+                                    viewGenotypes, viewInfo,
+                                    findOverlappingSamplesFromList,
+                                    makeVcfFromManifest,
+                                    makeVcfFromReports. findOverlap
+                                    requires you to input at least two vcf
+                                    files and the program will find the
+                                    samples biallelic sites in both vcf
+                                    files. selectSites will select
+                                    biallelic sites from the file that you
+                                    specify with format chr:pos:ref:alt
+                                    for each variant. viewGenotypes will
+                                    display the genotypes for sites of
+                                    interest. viewInfo will display a
+                                    variants information from info field.
+                                    makeVcfFromManifest takes an input of
+                                    a illumina manifest file and creates a
+                                    vcf sites file for sites that have a
+                                    reference allele. makeVcfFromReports
+                                    creates a vcf from illumina standard
+                                    report files. mergeVcfColumns merges
+                                    two vcf files (only biallelic sites;
+                                    no duplicate sample ids). filter --
+                                    remove variants from vcf, can be used
+                                    to ld-prune. concordance -- between two
+                                    samples from different vcfs
+    --excludeChr <excludeChr>       please specify a chr to exclude
+    --filterString <filterString>   The filter string to appy to the
+                                    filter command. Each variants
+                                    genotypes will be put into a variable
+                                    gtInfo. This is a list that acts much
+                                    like a hash table. Any valid R code
+                                    can be used, however, it MUST return a
+                                    LOGICAL R value.
+    --help                          Print the help message
+    --hwe <hwe>                     The Hardy-Weinberg p-value threshold
+                                    (Exact test); used in filtering
+    --idCol <idCol>                 The identity column to pull out of the
+                                    infile. Requires a header
+    --infile <infile>               The file to read in
+    --info <info>                   The info to select out of vcf
+    --manifest <manifest>           please specify a illumina manifest
+                                    file
+    --maxLd <maxLd>                 The maximum allowable pairwise ld when
+                                    filtering variants
+    --minAc <minAc>                 The minimum allele count for a variant
+                                    to be considered
+    --nucleotide                    Show nucleotides instead of numeric
+                                    genotype
+    --outfile <outfile>             The file to write out to
+    --popCol <popCol>               The population column to pull out of
+                                    the infile. Requires a header
+    --ref <ref>                     please specify a reference sequence
+    --sample <sample>               specify a sample id
+    --site <site>                   please specify a site
+    --vcf <vcf>                     a vcf file
+    --windowSizeKb <windowSizeKb>   The window size in kilobases when
+                                    filtering variants
 
 ```
 

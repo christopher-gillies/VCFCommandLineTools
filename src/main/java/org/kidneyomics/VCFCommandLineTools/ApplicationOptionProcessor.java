@@ -53,6 +53,17 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.build();
 		options.addOption(vcfOption);
 		
+		Option sampleOption = Option.builder()
+		.argName("sample")
+		.longOpt("sample")
+		.desc("specify a sample id")
+		.numberOfArgs(2)
+		.hasArg(true)
+		.valueSeparator(' ')
+		.required(false)
+		.build();
+		options.addOption(sampleOption);
+		
 		Option siteOption = Option.builder()
 		.argName("site")
 		.longOpt("site")
@@ -106,7 +117,7 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		Option commandOption = Option.builder()
 		.argName("command")
 		.longOpt("command")
-		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList, makeVcfFromManifest, makeVcfFromReports. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field. makeVcfFromManifest takes an input of a illumina manifest file and creates a vcf sites file for sites that have a reference allele. makeVcfFromReports creates a vcf from illumina standard report files. mergeVcfColumns merges two vcf files (only biallelic sites; no duplicate sample ids). filter -- remove variants from vcf, can be used to ld-prune")
+		.desc("The command you would like to perform: findOverlap, selectSites, viewGenotypes, viewInfo, findOverlappingSamplesFromList, makeVcfFromManifest, makeVcfFromReports. findOverlap requires you to input at least two vcf files and the program will find the samples biallelic sites in both vcf files. selectSites will select biallelic sites from the file that you specify with format chr:pos:ref:alt for each variant. viewGenotypes will display the genotypes for sites of interest. viewInfo will display a variants information from info field. makeVcfFromManifest takes an input of a illumina manifest file and creates a vcf sites file for sites that have a reference allele. makeVcfFromReports creates a vcf from illumina standard report files. mergeVcfColumns merges two vcf files (only biallelic sites; no duplicate sample ids). filter -- remove variants from vcf, can be used to ld-prune. concordance between two samples from different vcfs")
 		.numberOfArgs(1)
 		.hasArg(true)
 		.required(false)
@@ -266,6 +277,13 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			String[] vcfs = cmd.getOptionValues("vcf");
 			for(String vcf : vcfs) {
 				applicationOptions.addVcfFile(vcf);
+			}
+		}
+		
+		if(cmd.hasOption("sample")) {
+			String[] samples = cmd.getOptionValues("sample");
+			for(String sample : samples) {
+				applicationOptions.addSample(sample);
 			}
 		}
 		

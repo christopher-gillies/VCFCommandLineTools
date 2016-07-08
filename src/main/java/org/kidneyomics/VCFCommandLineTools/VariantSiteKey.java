@@ -3,6 +3,8 @@ package org.kidneyomics.VCFCommandLineTools;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.renjin.invoke.reflection.converters.BooleanArrayConverter;
+
 import htsjdk.variant.variantcontext.VariantContext;
 
 public class VariantSiteKey {
@@ -19,6 +21,10 @@ public class VariantSiteKey {
 		this.ref = ref;
 		this.alt = alt;
 		this.key = VariantKeyRenderer.render(chr, pos, ref, alt);
+	}
+	
+	public static VariantSiteKey create(String chr, int  pos, String ref, String alt) {
+		return new VariantSiteKey(chr,  pos, ref, alt);
 	}
 	
 	public static VariantSiteKey create(String variantKey) {
@@ -79,6 +85,21 @@ public class VariantSiteKey {
 		return this.key;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof VariantSiteKey) {
+			VariantSiteKey other = (VariantSiteKey) o;
+			return this.getKey().equals(other.getKey());
+		} else {
+			return false;
+		}
+		
+	}
+	
+	@Override
+	public int hashCode() {
+		return 17 * this.getKey().hashCode();
+	}
 	
 	
 }

@@ -1,23 +1,20 @@
 package org.kidneyomics.VCFCommandLineTools;
 
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.kidneyomics.VCFCommandLineTools.ApplicationOptions.Command;
 import org.slf4j.Logger;
-import org.springframework.amqp.rabbit.core.RabbitTemplate.ReturnCallback;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-@SpringBootApplication
+@SpringBootApplication()
 public class VcfCommandLineToolsApplication {
 
     public static void main(String[] args) throws ScriptException {
     	SpringApplication springApplication = new SpringApplication(new Object[] { VcfCommandLineToolsApplication.class });
     	springApplication.setLogStartupInfo(false);
+    	springApplication.setWebEnvironment(false);
     	ApplicationContext context = springApplication.run(args);
     	
     	ApplicationOptions options = context.getBean(ApplicationOptions.class);
@@ -57,6 +54,10 @@ public class VcfCommandLineToolsApplication {
 	    		break;
 	    	case FILTER:
 	    		runCommand = context.getBean(FilterCommand.class);
+	    		break;
+	    	case CONCORDANCE:
+	    		runCommand = context.getBean(ConcordanceCommand.class);
+	    		break;
 	    	default:
 	    			
 	    	}

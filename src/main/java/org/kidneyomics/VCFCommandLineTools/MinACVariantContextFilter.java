@@ -14,15 +14,7 @@ public class MinACVariantContextFilter implements VariantContextFilter {
 	
 	@Override
 	public boolean keep(VariantContext vc) {
-		GenotypesContext context = vc.getGenotypes();
-		int ac = 0;
-		for(Genotype gt : context) {
-			if(gt.isHet()) {
-				ac++;
-			} else if(gt.isHomVar()) {
-				ac+=2;
-			}
-		}
+		int ac = VariantContextUtil.ac(vc);
 		return ac >= minAc;
 	}
 

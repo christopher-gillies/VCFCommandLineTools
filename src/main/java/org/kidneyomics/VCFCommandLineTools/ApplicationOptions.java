@@ -51,6 +51,9 @@ public class ApplicationOptions {
 	//R based filter string MUST RETURN A LOGICAL
 	private String filterString = null;
 	
+	
+	private List<String> samples; 
+	
 	@Autowired
 	ApplicationOptions(LoggerService loggerService) {
 		this.logger = loggerService.getLogger(this);
@@ -59,6 +62,7 @@ public class ApplicationOptions {
 		sites = new LinkedList<String>();
 		infos = new LinkedList<>();
 		chrsToExclude = new LinkedList<>();
+		samples = new LinkedList<>();
 	}
 	
 	public enum Command {
@@ -72,7 +76,8 @@ public class ApplicationOptions {
 		MAKE_VCF_FROM_ILLUMINA,
 		MAKE_VCF_FROM_ILLUMINA_REPORTS,
 		MERGE_VCF_COLUMNS,
-		FILTER
+		FILTER,
+		CONCORDANCE
 	}
 
 	
@@ -108,6 +113,10 @@ public class ApplicationOptions {
 	
 	public List<File> getVcfs() {
 		return this.vcfs;
+	}
+	
+	public List<String> getSamples() {
+		return this.samples;
 	}
 	
 	public Command getCommand() {
@@ -155,6 +164,9 @@ public class ApplicationOptions {
 		case "filter":
 			command = Command.FILTER;
 			break;
+		case "concordance":
+			command = Command.CONCORDANCE;
+			break;
 		default: 
 			command = Command.NONE;
 			break;
@@ -173,6 +185,10 @@ public class ApplicationOptions {
 	
 	public List<String> getChrsToExclude() {
 		return this.chrsToExclude;
+	}
+	
+	public void addSample(String sample) {
+		this.samples.add(sample);
 	}
 	
 	public void addSite(String site) {
@@ -409,6 +425,11 @@ public class ApplicationOptions {
 				throw new IllegalArgumentException("when specifying a hwe threshold, please make sure it is greater than 0");
 			}
 			
+			break;
+		case CONCORDANCE:
+			if(vcfs.size() != 2) {
+				throw new IllegalArgumentException("Please specify two VCF");
+			}
 			break;
 		case HELP:
 			break;
