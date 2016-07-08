@@ -53,7 +53,7 @@ public class ConcordanceCalculator {
 	
 	public void addTruthSampleVariant(VariantContext vc) {
 		// only add biallelic variants
-		if(vc.isBiallelic()) {
+		if(vc.isBiallelic() && (vc.isIndel() || vc.isSNP())) {
 			VariantSiteKey key = VariantSiteKey.create(vc);
 			Genotype gt = vc.getGenotype(truthSample);
 			int gtNum = getGt(gt);
@@ -68,7 +68,7 @@ public class ConcordanceCalculator {
 	
 	public void addTestSampleVariant(VariantContext vc) {
 		// only add biallelic variants
-		if(vc.isBiallelic()) {
+		if(vc.isBiallelic() && (vc.isIndel() || vc.isSNP())) {
 			VariantSiteKey key = VariantSiteKey.create(vc);
 			Genotype gt = vc.getGenotype(testSample);
 			int gtNum = getGt(gt);
