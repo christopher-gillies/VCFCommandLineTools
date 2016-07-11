@@ -3,6 +3,8 @@ package org.kidneyomics.VCFCommandLineTools;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.kidneyomics.VCFCommandLineTools.ConcordanceResult.COUNT_TYPE;
 import org.kidneyomics.VCFCommandLineTools.GTRendererFactory.GT_RENDER_TYPE;
 
 import htsjdk.variant.variantcontext.Genotype;
@@ -117,11 +119,13 @@ public class ConcordanceCalculator {
 			int truthGt = entry.getValue();
 			if(testSampleVariants.containsKey(entry.getKey())) {
 				int testGt = testSampleVariants.get(entry.getKey());
-				res.update(truthGt, testGt);
+				COUNT_TYPE type = res.update(truthGt, testGt);
+				res.log(entry.getKey().toString(),truthGt, entry.getKey().toString(),testGt, type);
 			} else {
 				//missing in test set
 				int testGt = -1;
-				res.update(truthGt, testGt);
+				COUNT_TYPE type = res.update(truthGt, testGt);
+				res.log(entry.getKey().toString(),truthGt, StringUtils.EMPTY,testGt, type);
 			}
 		}
 		
@@ -132,7 +136,8 @@ public class ConcordanceCalculator {
 				int testGt = entry.getValue();
 				//it is not in the truth variants so the truthGt is missing!
 				int truthGt = -1;
-				res.update(truthGt, testGt);
+				COUNT_TYPE type = res.update(truthGt, testGt);
+				res.log(StringUtils.EMPTY, truthGt, entry.getKey().toString(), testGt, type);
 			}
 		}
 		

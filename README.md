@@ -229,6 +229,40 @@ Specificity: 1.0
 False Discovery Rate: 0.0
 ```
 
+#### Write a log file with Concordance
+```
+export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
+export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
+
+$vcfTools --command concordance --vcf "$VCF1" --vcf "$VCF1" --minAc 10 --sample HG00100 --sample HG00100 --outfile "/tmp/test.log"
+
+
+Truth VCF: /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz
+Test VCF: /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz
+Truth Sample: HG00100
+Test Sample: HG00100
+True Positives: 16554
+False Positives: 0
+True Negatives: 12676
+False Negatives: 0
+Sensitivity: 1.0
+Specificity: 1.0
+False Discovery Rate: 0.0
+
+head /tmp/test.log 
+20:48270776:C:T	0	20:48270776:C:T	0	TN
+20:44916134:C:T	1	20:44916134:C:T	1	TP
+20:12794193:G:A	2	20:12794193:G:A	2	TP
+20:8662410:A:G	1	20:8662410:A:G	1	TP
+20:52437475:T:C	1	20:52437475:T:C	1	TP
+20:51727616:C:T	1	20:51727616:C:T	1	TP
+20:23592714:T:C	0	20:23592714:T:C	0	TN
+20:46483476:T:C	0	20:46483476:T:C	0	TN
+20:39103371:G:A	1	20:39103371:G:A	1	TP
+20:38560263:A:G	1	20:38560263:A:G	1	TP
+```
+The columns are \[KEY for Truth\] \[GT for Truth\] \[Key for Test\] \[GT for Test\]
+
 ## Help
 ```
 $vcfTools --help            

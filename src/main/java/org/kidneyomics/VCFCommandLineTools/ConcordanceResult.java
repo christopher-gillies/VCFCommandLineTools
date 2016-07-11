@@ -1,10 +1,18 @@
 package org.kidneyomics.VCFCommandLineTools;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class ConcordanceResult {
+	
+	public enum COUNT_TYPE {
+		TP,FN,FP,TN,UNKNOWN
+	}
 	
 	private ConcordanceResult(String truthSample, String testSample) {
 		this.truthSample = truthSample;
 		this.testSample = testSample;
+		this.log = new LinkedList<>();
 	}
 	
 	static ConcordanceResult create(String truthSample, String testSample) {
@@ -13,7 +21,7 @@ public class ConcordanceResult {
 	
 	private final String truthSample;
 	private final String testSample;
-	
+	private final List<String> log;
 	private int tp = 0;
 	private int fp = 0;
 	private int tn = 0;
@@ -26,7 +34,14 @@ public class ConcordanceResult {
 	fp = 0 or missing in 1000G and 1 or 2 in MIPS
 	tn = 0 in 1000G and 0 in MIPS
 	*/
-	void update(int truthGt, int testGt) {
+	/**
+	 * 
+	 * @param truthGt {-1,0,1,2}
+	 * @param testGt {-1,0,1,2}
+	 * @return COUNT_TYPE of how this pair was counted
+	 */
+	COUNT_TYPE update(int truthGt, int testGt) {
+		COUNT_TYPE res = COUNT_TYPE.UNKNOWN;
 		if( (truthGt == -1 || truthGt == 0 || truthGt == 1 || truthGt == 2) &&
 				(testGt == -1 || testGt == 0 || testGt == 1 || testGt == 2)	) {
 			
@@ -34,6 +49,7 @@ public class ConcordanceResult {
 			case -1:
 				if(testGt == 1 || testGt == 2) {
 					fp++;
+					res = COUNT_TYPE.FP;
 				}
 				break;
 			case 0:
@@ -42,8 +58,10 @@ public class ConcordanceResult {
 					//do nothing
 				} else if(testGt == 0) {
 					tn++;
+					res = COUNT_TYPE.TN;
 				} else if(testGt == 1 || testGt == 2) {
 					fp++;
+					res = COUNT_TYPE.FP;
 				}
 			}
 				break;
@@ -52,8 +70,10 @@ public class ConcordanceResult {
 			{
 				if(testGt == -1 || testGt == 0) {
 					fn++;
+					res = COUNT_TYPE.FN;
 				} else if(testGt == 1 || testGt == 2) {
 					tp++;
+					res = COUNT_TYPE.TP;
 				}
 			}
 				break;
@@ -63,6 +83,22 @@ public class ConcordanceResult {
 		} else {
 			throw new RuntimeException(truthGt + " or " + testGt + " is not biallelic");
 		}
+		
+		return res;
+	}
+	
+	
+	/**
+	 * 
+	 * @param truthKey -- variant key for the truth variant
+	 * @param testKey -- variant key for the test variant
+	 * @param type
+	 * @return the log entry
+	 */
+	String log(String truthKey, int truthGt, String testKey, int testGt, COUNT_TYPE type) {
+		String result = String.format("%1$s\t%2$d\t%3$s\t%4$d\t%5$s", truthKey,truthGt,testKey,testGt,type);
+		this.log.add(result);
+		return result;
 	}
 	
 	/**
@@ -115,6 +151,14 @@ public class ConcordanceResult {
 		//false discovery rate
 		//fraction of false positives / total positive calls
 		return fp / ( (double) fp + tp);
+	}
+	
+	/**
+	 * 
+	 * @return the logged entries
+	 */
+	public List<String> getLog() {
+		return this.log;
 	}
 	
 	@Override

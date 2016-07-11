@@ -3,6 +3,9 @@ package org.kidneyomics.VCFCommandLineTools;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.compress.compressors.FileNameUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,11 @@ public class ConcordanceCommand implements RunCommand {
 	
 	@Override
 	public void runCommand() {
-
 		try {
 			List<String> samples = applicationOptions.getSamples();
-
+			String outfile = applicationOptions.getOutFile();
+			final boolean writeLog = !StringUtils.isEmpty(outfile);
+			
 			assert samples.size() == 2;
 			
 			String truthSample = samples.get(0);
@@ -85,9 +89,16 @@ public class ConcordanceCommand implements RunCommand {
 
 			ConcordanceResult res = calculator.computeConcordance();
 			lastResult = res;
+			
+			if(writeLog) {
+				logger.info("Writing out logfile: " + outfile);
+				FileUtils.writeLines(new File(outfile), res.getLog());
+			}
+			
 			System.out.println("Truth VCF: " + truthVcf.getAbsolutePath());
 			System.out.println("Test VCF: " + testVcf.getAbsolutePath());
 			System.out.println(res);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
