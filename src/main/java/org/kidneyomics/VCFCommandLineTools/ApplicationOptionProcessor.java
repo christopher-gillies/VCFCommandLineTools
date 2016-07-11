@@ -230,6 +230,14 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.build();
 		options.addOption(infoOpt);
 		
+		Option snpsOnlyOption = Option.builder()
+		.longOpt("snpsOnly")
+		.desc("Print the help message")
+		.hasArg(false)
+		.required(false)
+		.build();
+		options.addOption(snpsOnlyOption);
+		
 		Option helpOption = Option.builder()
 		.longOpt("help")
 		.desc("Print the help message")
@@ -262,6 +270,11 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 			return;
 		}
 		
+		if(cmd.hasOption("snpsOnly")) {
+			applicationOptions.setSnpsOnly(true);
+		} else {
+			applicationOptions.setSnpsOnly(false);
+		}
 		
 		if(cmd.hasOption("help")) {
 			printHelp(options);

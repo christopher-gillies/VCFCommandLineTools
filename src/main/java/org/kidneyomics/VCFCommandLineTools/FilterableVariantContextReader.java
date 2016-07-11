@@ -130,7 +130,7 @@ public class FilterableVariantContextReader implements Iterable<VariantContext>,
 		String popCol = applicationOptions.getPopCol();
 		String idCol = applicationOptions.getIdCol();
 		String filterString = applicationOptions.getFilterString();
-		
+		boolean snpsOnly = applicationOptions.isSnpsOnly();
 
 		
 		
@@ -145,6 +145,9 @@ public class FilterableVariantContextReader implements Iterable<VariantContext>,
 		reader.maxLd = maxLd;
 		reader.windowSizeBp = windowSizeBp;
 		
+		if(snpsOnly) {
+			reader.filters.add(new SNPsOnlyFilter());
+		}
 		
 		//check to see if we should add minAc filter
 		if(minAc > 0) {

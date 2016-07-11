@@ -51,7 +51,18 @@ public class ApplicationOptions {
 	//R based filter string MUST RETURN A LOGICAL
 	private String filterString = null;
 	
+	private boolean snpsOnly = false;
 	
+	
+	
+	public boolean isSnpsOnly() {
+		return snpsOnly;
+	}
+
+	public void setSnpsOnly(boolean snpsOnly) {
+		this.snpsOnly = snpsOnly;
+	}
+
 	private List<String> samples; 
 	
 	@Autowired

@@ -234,7 +234,7 @@ False Discovery Rate: 0.0
 export vcfTools="java -jar /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/release/VCFCommandLineTools-0.0.1.jar"
 export VCF1="/Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz"
 
-$vcfTools --command concordance --vcf "$VCF1" --vcf "$VCF1" --minAc 10 --sample HG00100 --sample HG00100 --outfile "/tmp/test.log"
+$vcfTools --command concordance --vcf "$VCF1" --vcf "$VCF1" --minAc 10 --sample HG00100 --sample HG00100 --outfile "/tmp/test.log" --snpsOnly
 
 
 Truth VCF: /Users/cgillies/Documents/workspace-sts-3.6.1.RELEASE/VCFCommandLineTools/src/test/resources/ALL.chip.omni_broad_sanger_combined.20140818.snps.genotypes.chr20.subset.vcf.gz
