@@ -34,7 +34,11 @@ public class ApplicationOptions {
 	private List<String> chrsToExclude;
 	
 	private List<String> sites;
+	private String gtInfoKey = "GT";
 	
+	public String getGtInfoKey() {
+		return this.gtInfoKey;
+	}
 	private List<String> infos;
 	
 	private GT_RENDER_TYPE gtRendererType = GT_RENDER_TYPE.NUMERIC;
@@ -140,6 +144,11 @@ public class ApplicationOptions {
 	
 	public void setNucleotideRender() {
 		this.gtRendererType = GT_RENDER_TYPE.NUCLEOTIDE;
+	}
+	
+	public void setGTCustomRenderer(String key) {
+		this.gtRendererType = GT_RENDER_TYPE.CUSTOM;
+		this.gtInfoKey = key;
 	}
 	
 	public void setCommand(String commandString) {

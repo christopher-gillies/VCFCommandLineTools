@@ -136,5 +136,30 @@ public class GTRendererTest {
 		assertTrue(result.equals("A|T"));
 		
 	}
+	
+	
+	@Test
+	public void testCustom() {
+		GTRenderer renderer = GTRendererFactory.getGTRenderer(GT_RENDER_TYPE.CUSTOM);
+		GTRendererFactory.setCustomKey(renderer, "DS");
+		
+		Allele a1 = Allele.create("A", true);
+		Allele a2 = Allele.create("T",false);
+		
+		List<Allele> alleles = new LinkedList<Allele>();
+		
+		alleles.add(a1);
+		alleles.add(a2);
+		
+		HashMap<String,Object> attr = new HashMap<>();
+		attr.put("DS", 1.3);
+		Genotype gt = GenotypeBuilder.create("SAMPLE1", alleles, attr);
+		
+		
+		String result = renderer.render(gt);
+		
+		assertTrue(result.equals("1.3"));
+		
+	}
 
 }

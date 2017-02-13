@@ -230,6 +230,16 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		.build();
 		options.addOption(infoOpt);
 		
+		Option gtOpt = Option.builder()
+		.argName("gtInfo")
+		.longOpt("gtInfo")
+		.desc("The gt info field to render instead of numeric GT or nucleotide")
+		.numberOfArgs(1)
+		.hasArg(true)
+		.required(false)
+		.build();
+		options.addOption(gtOpt);
+		
 		Option snpsOnlyOption = Option.builder()
 		.longOpt("snpsOnly")
 		.desc("Print the help message")
@@ -284,6 +294,11 @@ public class ApplicationOptionProcessor implements OptionProcessor {
 		
 		if(cmd.hasOption("nucleotide")) {
 			applicationOptions.setNucleotideRender();
+		}
+		
+		if(cmd.hasOption("gtInfo")) {
+			String key = (String) cmd.getOptionValue("gtInfo");
+			applicationOptions.setGTCustomRenderer(key);
 		}
 		
 		if(cmd.hasOption("vcf")) {

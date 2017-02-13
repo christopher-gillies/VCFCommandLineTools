@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.kidneyomics.VCFCommandLineTools.GTRendererFactory.GT_RENDER_TYPE;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,10 @@ public class ViewGenotypesCommand implements RunCommand {
 		File vcf = applicationOptions.getVcfs().get(0);
 		
 		GTRenderer gtRenderer = GTRendererFactory.getGTRenderer(applicationOptions.getGtRendererType());
+		
+		if(applicationOptions.getGtRendererType() == GT_RENDER_TYPE.CUSTOM) {
+			GTRendererFactory.setCustomKey(gtRenderer, applicationOptions.getGtInfoKey());
+		}
 		
 		VCFFileReader reader = new VCFFileReader(vcf);
 		
